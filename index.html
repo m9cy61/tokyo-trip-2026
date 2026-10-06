@@ -49,7 +49,7 @@
 
     /* timeline */
     .route{position:relative;margin-top:20px}.route:before{content:"";position:absolute;left:101px;top:17px;bottom:22px;width:1px;background:var(--line)}
-    .stop{display:grid;grid-template-columns:90px 1fr;gap:24px;position:relative;padding:0 0 24px}.time{font-size:13px;font-weight:800;color:var(--red);padding-top:2px;text-align:right;letter-spacing:.01em}.dot{position:absolute;left:95px;top:2px;width:13px;height:13px;border:3px solid var(--ink);background:var(--card);border-radius:50%;z-index:2}.stop-body{padding-left:10px}.stop-title{font-size:17px;font-weight:800}.stop-note{font-size:14px;color:#625e57;margin-top:2px}.tag{display:inline-block;background:#f2ece2;border:1px solid #e4dacb;border-radius:999px;padding:3px 8px;font-size:11px;margin:7px 6px 0 0;color:#685f53}
+    .stop{display:grid;grid-template-columns:90px 1fr;gap:24px;position:relative;padding:0 0 24px}.time{font-size:13px;font-weight:800;color:var(--red);padding-top:2px;text-align:right;letter-spacing:.01em;white-space:nowrap}.dot{position:absolute;left:95px;top:2px;width:13px;height:13px;border:3px solid var(--ink);background:var(--card);border-radius:50%;z-index:2}.stop-body{padding-left:10px}.stop-title{font-size:17px;font-weight:800}.stop-note{font-size:14px;color:#625e57;margin-top:2px}.tag{display:inline-block;background:#f2ece2;border:1px solid #e4dacb;border-radius:999px;padding:3px 8px;font-size:11px;margin:7px 6px 0 0;color:#685f53}
 
     /* map */
     .map-card{padding:0;overflow:hidden}.map-head{padding:18px 20px 10px;display:flex;justify-content:space-between;gap:12px;align-items:flex-end}.map-head h3{margin:0;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:22px}.map-head small{color:var(--muted)}
@@ -256,10 +256,10 @@
       .sub{font-size:13px}
 
       .route{margin-top:18px}
-      .route:before{left:72px;top:14px;bottom:18px}
-      .stop{grid-template-columns:62px minmax(0,1fr);gap:12px;padding-bottom:20px}
-      .time{text-align:right;font-size:12px;line-height:1.45;overflow-wrap:anywhere}
-      .dot{left:66px;top:0;width:12px;height:12px}
+      .route:before{left:81px;top:14px;bottom:18px}
+      .stop{grid-template-columns:74px minmax(0,1fr);gap:12px;padding-bottom:20px}
+      .time{text-align:right;font-size:11px;line-height:1.45;white-space:nowrap;overflow:visible;letter-spacing:-.02em}
+      .dot{left:75px;top:0;width:12px;height:12px}
       .stop-body{padding-left:10px;min-width:0}
       .stop-title{font-size:15.5px;line-height:1.4;overflow-wrap:anywhere}
       .stop-note{font-size:13px;line-height:1.55;overflow-wrap:anywhere}
@@ -321,11 +321,11 @@
       .card{padding:14px;border-radius:16px}
       .day-title h2{font-size:21px}
       .badge{padding:4px 8px}
-      .route:before{left:67px}
-      .stop{grid-template-columns:56px minmax(0,1fr);gap:10px;padding-bottom:18px}
-      .dot{left:61px}
+      .route:before{left:75px}
+      .stop{grid-template-columns:68px minmax(0,1fr);gap:9px;padding-bottom:18px}
+      .dot{left:69px}
       .stop-body{padding-left:9px}
-      .time{font-size:11px}
+      .time{font-size:10px;letter-spacing:-.035em;white-space:nowrap}
       .stop-title{font-size:14.5px}
       .stop-note{font-size:12.5px}
       .tag{font-size:10px}
@@ -659,7 +659,7 @@
     const PEOPLE_KEY='tokyo-trip-people-v1';
     const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
     const CLOUD_SESSION_KEY='tokyo-cloud-session-v1';
-    const SUPABASE_URL='PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_URL='https://jgcyhxaorkwubmdgjabc.supabase.co';
     const SUPABASE_PUBLISHABLE_KEY='PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE';
     const TRIP_NAME='東京 2026｜10/14–10/19';
     const isSupabaseConfigured=SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');

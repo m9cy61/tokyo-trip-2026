@@ -256,10 +256,11 @@
       .sub{font-size:13px}
 
       .route{margin-top:18px}
-      .route:before{left:81px;top:14px;bottom:18px}
-      .stop{grid-template-columns:74px minmax(0,1fr);gap:12px;padding-bottom:20px}
-      .time{text-align:right;font-size:11px;line-height:1.45;white-space:nowrap;overflow:visible;letter-spacing:-.02em}
-      .dot{left:75px;top:0;width:12px;height:12px}
+      /* Mobile timeline: reserve a wider, fixed time column so the dot never overlaps the time text. */
+      .route:before{left:90px;top:14px;bottom:18px}
+      .stop{grid-template-columns:84px minmax(0,1fr);gap:14px;padding-bottom:20px}
+      .time{display:block;min-width:0;text-align:right;font-size:10.5px;line-height:1.45;white-space:nowrap;overflow:visible;letter-spacing:-.025em;padding-right:2px}
+      .dot{left:84px;top:0;width:12px;height:12px}
       .stop-body{padding-left:10px;min-width:0}
       .stop-title{font-size:15.5px;line-height:1.4;overflow-wrap:anywhere}
       .stop-note{font-size:13px;line-height:1.55;overflow-wrap:anywhere}
@@ -321,11 +322,11 @@
       .card{padding:14px;border-radius:16px}
       .day-title h2{font-size:21px}
       .badge{padding:4px 8px}
-      .route:before{left:75px}
-      .stop{grid-template-columns:68px minmax(0,1fr);gap:9px;padding-bottom:18px}
-      .dot{left:69px}
-      .stop-body{padding-left:9px}
-      .time{font-size:10px;letter-spacing:-.035em;white-space:nowrap}
+      .route:before{left:84px}
+      .stop{grid-template-columns:78px minmax(0,1fr);gap:12px;padding-bottom:18px}
+      .dot{left:78px}
+      .stop-body{padding-left:8px}
+      .time{font-size:10px;letter-spacing:-.03em;white-space:nowrap;padding-right:2px}
       .stop-title{font-size:14.5px}
       .stop-note{font-size:12.5px}
       .tag{font-size:10px}
@@ -659,7 +660,7 @@
     const PEOPLE_KEY='tokyo-trip-people-v1';
     const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
     const CLOUD_SESSION_KEY='tokyo-cloud-session-v1';
-    const SUPABASE_URL='https://jgcyhxaorkwubmdgjabc.supabase.co';
+        const SUPABASE_URL='https://jgcyhxaorkwubmdgjabc.supabase.co';
     const SUPABASE_PUBLISHABLE_KEY='sb_publishable_ZtuAIMtUjAFePvuxVgT5rQ_kRHXsq94';
     const TRIP_NAME='東京 2026｜10/14–10/19';
     const isSupabaseConfigured=SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');

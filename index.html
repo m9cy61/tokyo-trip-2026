@@ -4,8 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5efe4" />
-  <title>東京6天5夜｜2026.10.14–10.19</title>
-
+  <title>東京 6天5夜｜2026.10.14–10.19</title>
   <style>
     :root{
       --paper:#f5efe4; --paper2:#fbf8f1; --card:#fffdf8; --ink:#28251f; --muted:#7a756d;
@@ -660,8 +659,8 @@
     const PEOPLE_KEY='tokyo-trip-people-v1';
     const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
     const CLOUD_SESSION_KEY='tokyo-cloud-session-v1';
-    const SUPABASE_URL='https://jgcyhxaorkwubmdgjabc.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY='sb_publishable_ZtuAIMtUjAFePvuxVgT5rQ_kRHXsq94';
+    const SUPABASE_URL='PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_PUBLISHABLE_KEY='PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE';
     const TRIP_NAME='東京 2026｜10/14–10/19';
     const isSupabaseConfigured=SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
     const sbClient=isSupabaseConfigured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;
@@ -685,7 +684,47 @@
     let cloudExpenses=Object.fromEntries(days.map((_,i)=>[i,[]]));
     let cloudMembers=[];
     let cloudChannel=null;
+    let cloudSharedChannel=null;
     let cloudBusy=false;
+    let cloudSharedItems={check:{},dpa:{}};
+
+    function getSharedItem(type,key){
+      return !!(cloudSharedItems[type] && cloudSharedItems[type][key]);
+    }
+
+    function setSharedItemLocal(type,key,value){
+      if(!cloudSharedItems[type]) cloudSharedItems[type]={};
+      if(value) cloudSharedItems[type][key]=true;
+      else delete cloudSharedItems[type][key];
+    }
+
+    async function loadCloudSharedItems(){
+      if(!sbClient||!cloudTripId) return;
+      const {data,error}=await sbClient.from('trip_shared_items')
+        .select('trip_id,item_type,item_key,value')
+        .eq('trip_id',cloudTripId);
+      if(error) throw error;
+      cloudSharedItems={check:{},dpa:{}};
+      (data||[]).forEach(row=>{
+        if(row.value && cloudSharedItems[row.item_type]) cloudSharedItems[row.item_type][row.item_key]=true;
+      });
+    }
+
+    async function setCloudSharedItem(type,key,value){
+      if(!sbClient||!cloudTripId) return;
+      if(value){
+        const {error}=await sbClient.from('trip_shared_items').upsert(
+          {trip_id:cloudTripId,item_type:type,item_key:key,value:true,updated_at:new Date().toISOString()},
+          {onConflict:'trip_id,item_type,item_key'}
+        );
+        if(error) throw error;
+      }else{
+        const {error}=await sbClient.from('trip_shared_items').delete()
+          .eq('trip_id',cloudTripId).eq('item_type',type).eq('item_key',key);
+        if(error) throw error;
+      }
+      setSharedItemLocal(type,key,value);
+    }
 
     function getCloudSession(){
       try{return JSON.parse(localStorage.getItem(CLOUD_SESSION_KEY)||'null')}catch{return null}
@@ -733,7 +772,7 @@
     const money=n=>`¥${Math.round(Number(n)||0).toLocaleString('ja-JP')}`;
 
     function cloudStatusText(){
-      if(!isSupabaseConfigured) return {cls:'sync-off',label:'🗃️ 目前為本機記帳',detail:'要讓四支手機共享，請先建立 Supabase 專案並填入網址與 Publishable Key。'};
+      if(!isSupabaseConfigured) return {cls:'sync-off',label:'🗃️ 目前為本機記帳',detail:'要讓手機與電腦共享，請先建立 Supabase 專案並填入網址與 Publishable Key。'};
       if(!cloudTripId) return {cls:'sync-warn',label:'☁️ Supabase 已連線，尚未加入共同帳本',detail:'先由一支手機建立共同帳本，再把邀請碼給其他三人。'};
       return {cls:'sync-on',label:'☁️ 四人共享記帳中',detail:`目前帳本：${TRIP_NAME}｜登入身分：${cloudDisplayName||'已加入'}｜所有成員看到的是同一份雲端資料。`};
     }
@@ -760,7 +799,7 @@
     async function joinSharedTrip(displayName,inviteCode){
       if(!sbClient) throw new Error('Supabase 尚未設定。');
       if(!DEFAULT_PEOPLE.includes(displayName)) throw new Error('請從小王／小施／小郭／小羅中選擇。');
-      if(!inviteCode.trim()) throw new Error('請輸入 24 位邀請碼。');
+      if(!inviteCode.trim()) throw new Error('請輸入 10 碼左右的邀請碼。');
       const {data,error}=await sbClient.rpc('join_trip',{p_invite_code:inviteCode.trim().toUpperCase(),p_display_name:displayName});
       if(error) throw error;
       const row=Array.isArray(data)?data[0]:data;
@@ -784,13 +823,19 @@
 
     function stopCloudRealtime(){
       if(cloudChannel&&sbClient){sbClient.removeChannel(cloudChannel);cloudChannel=null;}
+      if(cloudSharedChannel&&sbClient){sbClient.removeChannel(cloudSharedChannel);cloudSharedChannel=null;}
     }
     function startCloudRealtime(){
       if(!sbClient||!cloudTripId) return;
       stopCloudRealtime();
       cloudChannel=sbClient.channel(`tokyo-expenses-${cloudTripId}`)
         .on('postgres_changes',{event:'*',schema:'public',table:'trip_expenses',filter:`trip_id=eq.${cloudTripId}`},async()=>{
-          try{await loadCloudExpenses();refreshAllExpenseUI();}catch(err){console.error('Realtime refresh failed',err);}
+          try{await loadCloudExpenses();refreshAllExpenseUI();}catch(err){console.error('Realtime expense refresh failed',err);}
+        })
+        .subscribe();
+      cloudSharedChannel=sbClient.channel(`tokyo-shared-${cloudTripId}`)
+        .on('postgres_changes',{event:'*',schema:'public',table:'trip_shared_items',filter:`trip_id=eq.${cloudTripId}`},async()=>{
+          try{await loadCloudSharedItems();applySharedUi();renderDpa();}catch(err){console.error('Realtime shared-state refresh failed',err);}
         })
         .subscribe();
     }
@@ -801,7 +846,10 @@
       savePeople();
       await loadCloudMembers();
       await loadCloudExpenses();
+      await loadCloudSharedItems();
       startCloudRealtime();
+      applySharedUi();
+      renderDpa();
     }
 
     function updateCloudUI(){
@@ -839,7 +887,7 @@
       if(leaveBtn) leaveBtn.addEventListener('click',()=>{
         if(!cloudTripId)return;
         if(!confirm('確定要讓這台裝置退出目前共同帳本嗎？雲端帳目不會被刪除，之後可再用邀請碼加入。'))return;
-        stopCloudRealtime();saveCloudSession(null);cloudExpenses=Object.fromEntries(days.map((_,i)=>[i,[]]));cloudMembers=[];people=[...DEFAULT_PEOPLE];savePeople();refreshAllExpenseUI();renderOverall();updateCloudUI();
+        stopCloudRealtime();saveCloudSession(null);cloudExpenses=Object.fromEntries(days.map((_,i)=>[i,[]]));cloudMembers=[];cloudSharedItems={check:{},dpa:{}};people=[...DEFAULT_PEOPLE];savePeople();refreshAllExpenseUI();renderOverall();applySharedUi();renderDpa();updateCloudUI();
       });
       updateCloudUI();
     }
@@ -882,16 +930,16 @@
         </div>
 
         <div class="card cloud-card" id="cloud-ledger-card">
-          <div class="day-title"><div><div class="eyebrow">CLOUD SHARED LEDGER</div><h2>☁️ 四人共享記帳</h2><p class="sub">同一個共同帳本後，四支手機都會看到相同的每日帳目與六天總帳。</p></div><div class="badge">Supabase</div></div>
+          <div class="day-title"><div><div class="eyebrow">CLOUD SHARED LEDGER</div><h2>☁️ 四人共享記帳</h2><p class="sub">同一個共同帳本後，不同手機與電腦都會看到相同的每日帳目與六天總帳。</p></div><div class="badge">Supabase</div></div>
           <div class="cloud-status" data-cloud-status></div>
           <div class="cloud-actions">
             <div class="field"><label>我是誰</label><select data-cloud-display-name>${DEFAULT_PEOPLE.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('')}</select></div>
-            <div class="field"><label>加入時輸入邀請碼</label><input data-cloud-invite-input type="text" inputmode="text" autocomplete="off" placeholder="貼上 24 位邀請碼"></div>
+            <div class="field"><label>加入時輸入邀請碼</label><input data-cloud-invite-input type="text" inputmode="text" autocomplete="off" placeholder="例如：A1B2C3D4E5"></div>
             <div class="cloud-btns"><button type="button" class="primary-btn" data-cloud-create>建立共同帳本</button><button type="button" class="ghost-btn" data-cloud-join>加入共同帳本</button><button type="button" class="ghost-btn" data-cloud-leave>退出本機帳本</button></div>
           </div>
           <div class="cloud-code" data-cloud-code style="display:none"></div>
           <div class="cloud-members" data-cloud-members></div>
-          <div class="expense-footer">目前版本使用 Supabase Anonymous Sign-In，不需要輸入 email 或密碼；每支裝置會記住自己的匿名工作階段。公開網站上的 Supabase Publishable Key 可以放在前端，但資料庫一定要配合 RLS，不能把 service_role key 放進網頁。</div>
+          <div class="expense-footer">目前版本使用 Supabase Anonymous Sign-In，不需要輸入 email 或密碼；每支裝置會記住自己的匿名工作階段。加入同一個旅行帳本後，記帳、Checklist、Disney DPA 勾選都會共用同一份雲端資料。公開網站上的 Supabase Publishable Key 可以放在前端，但資料庫一定要配合 RLS，不能把 service_role key 放進網頁。</div>
         </div>
 
         <div class="card"><div class="day-title"><div><div class="eyebrow">FINAL BALANCE</div><h2>整趟旅行結算</h2><p class="sub">「已付」－「應付」＝最後應收／應還</p></div><div class="badge">六天合併</div></div><div class="overall-person-grid" data-overall-people-grid></div></div>
@@ -901,7 +949,7 @@
 
     function expenseTrackerTemplate(dayIndex,label){
       return `<div class="card expense-card" data-expense-day="${dayIndex}">
-        <div class="expense-head"><div><div class="eyebrow">DAILY EXPENSES</div><h3>💰 ${label}｜今日記帳</h3><p>每一天獨立計算，輸入「誰付錢」＋「哪些人一起分攤」，系統會自動算出最後誰要給誰多少。</p></div><div class="expense-cloud-badge">🗃️ 本機記帳</div></div>
+        <div class="expense-head"><div><div class="eyebrow">DAILY EXPENSES</div><h3>💰 ${label}｜今日記帳</h3><p>每一天獨立計算，輸入「誰付錢」＋「哪些人一起分攤」，系統會自動算出最後誰要給誰多少。</p></div><div class="expense-cloud-badge">☁️ 共享狀態會同步到手機與電腦</div></div>
         <div class="people-editor" data-people-editor></div>
         <div class="expense-form"><div class="field"><label>花費項目</label><input type="text" data-field="item" placeholder="例如：晚餐、車資、藥妝"></div><div class="field"><label>金額（日圓）</label><input type="number" data-field="amount" min="0" step="1" placeholder="0"></div><div class="field"><label>誰先付款</label><select data-field="payer"></select></div><div class="expense-actions"><button class="primary-btn" type="button" data-add-expense>＋ 新增</button></div><div class="participant-picker"><div class="participant-picker-title">哪些人要分攤這筆？（預設全員）</div><div class="participant-list" data-participants></div></div></div>
         <div class="expense-list" data-expense-list></div><div class="summary-grid"><div class="expense-summary"><h4>今日結算</h4><div data-balance></div></div><div class="settlement-box"><h4>建議怎麼還</h4><div class="settlement-list" data-settlement></div></div></div><div class="expense-footer">算法：每筆花費會平均分給勾選的人；「已付」減掉「應付」就是最後應收／應還。金額以日圓整數計算，若除不盡會自動四捨五入，最終以總額校正。</div>
@@ -1051,7 +1099,7 @@
           if(sess?.tripId){cloudTripId=sess.tripId;cloudInviteCode=sess.inviteCode||'';cloudDisplayName=sess.displayName||'';await activateCloudSession();}
         }
       }catch(err){console.error('Supabase init failed',err);alert(`Supabase 連線初始化失敗：${err.message||err}\n\n先使用本機記帳也可以，設定好資料庫後再重新整理。`);}
-      refreshAllExpenseUI(); renderDpa(); updateCloudUI();
+      refreshAllExpenseUI(); applySharedUi(); renderDpa(); updateCloudUI();
     },0);
 
     function setActiveNav(index){
@@ -1072,24 +1120,40 @@
       window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    // Persist checklist state locally in browser.
+    // Checklist state: shared through Supabase when a cloud trip is active;
+    // otherwise saved locally in this browser.
+    async function syncChecklistState(input){
+      const key=input.dataset.key; if(!key) return;
+      if(cloudTripId && sbClient){
+        try{await setCloudSharedItem('check',key,input.checked);}catch(err){
+          console.error('Checklist sync failed',err);
+          alert(`同步勾選狀態失敗：${err.message||err}`);
+        }
+      }else{
+        localStorage.setItem('tokyo-check-'+key,input.checked?'1':'0');
+      }
+    }
+
+    function applySharedUi(){
+      document.querySelectorAll('.check input[data-key]').forEach(input=>{
+        const done=cloudTripId ? getSharedItem('check',input.dataset.key) : localStorage.getItem('tokyo-check-'+input.dataset.key)==='1';
+        input.checked=done;
+        input.closest('.check').classList.toggle('done',done);
+      });
+    }
+
     document.addEventListener('change',e=>{
       if(e.target.matches('.check input')){
-        const key=e.target.dataset.key; if(!key) return;
-        localStorage.setItem('tokyo-check-'+key,e.target.checked?'1':'0');
-        e.target.closest('.check').classList.toggle('done',e.target.checked);
+        const input=e.target;
+        input.closest('.check').classList.toggle('done',input.checked);
+        syncChecklistState(input);
       }
-    });
-    document.addEventListener('DOMContentLoaded',()=>{
-      document.querySelectorAll('.check input[data-key]').forEach(input=>{
-        const done=localStorage.getItem('tokyo-check-'+input.dataset.key)==='1';
-        input.checked=done; input.closest('.check').classList.toggle('done',done);
-      });
     });
       // DPA selection state for DisneySea 10/15.
     const DPA_TOTAL_KEY = 'tokyo-dpa-v1';
     const DPA_PRICES = { anna:2500, rapunzel:2000, peter:2000, soaring:2500, toystory:2000, journey:2000, raging:1500, believe:2500 };
     function loadDpa(){
+      if(cloudTripId) return {...cloudSharedItems.dpa};
       try{ const raw=localStorage.getItem(DPA_TOTAL_KEY); return raw?JSON.parse(raw):{}; }catch{return {}}
     }
     function renderDpa(){
@@ -1099,10 +1163,20 @@
       const one=document.querySelector('[data-dpa-total]'); const four=document.querySelector('[data-dpa-total-4]');
       if(one) one.textContent=money(total); if(four) four.textContent=money(total*4);
     }
-    document.addEventListener('change',e=>{
-      if(e.target.matches('[data-dpa]')){ const state=loadDpa(); state[e.target.dataset.dpa]=e.target.checked; localStorage.setItem(DPA_TOTAL_KEY,JSON.stringify(state)); renderDpa(); }
+    document.addEventListener('change',async e=>{
+      if(!e.target.matches('[data-dpa]')) return;
+      const key=e.target.dataset.dpa;
+      try{
+        if(cloudTripId && sbClient){await setCloudSharedItem('dpa',key,e.target.checked);}
+        else{ const state=loadDpa(); state[key]=e.target.checked; localStorage.setItem(DPA_TOTAL_KEY,JSON.stringify(state)); }
+        renderDpa();
+      }catch(err){
+        console.error('DPA sync failed',err);
+        alert(`同步 DPA 狀態失敗：${err.message||err}`);
+        e.target.checked=!e.target.checked;
+        renderDpa();
+      }
     });
-
 
 
     // Desktop UX: convert mouse-wheel vertical movement into horizontal scrolling

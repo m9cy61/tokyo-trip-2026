@@ -67,6 +67,93 @@
     .route-strip{display:flex;align-items:center;gap:7px;overflow:auto;padding:5px 2px 2px;scrollbar-width:none}.route-strip::-webkit-scrollbar{display:none}.route-node{min-width:112px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fffcf7;font-size:12px}.route-node b{display:block;font-size:13px}.route-arrow{color:#a08f7e;font-size:16px}
     .map-note{font-size:12px;color:var(--muted);margin-top:8px}
 
+
+    /* expense tracker */
+    .expense-card{margin-top:18px}
+    .expense-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+    .expense-head h3{margin:0;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:24px}
+    .expense-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .people-editor{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .person-chip{display:flex;align-items:center;gap:6px;background:#fffaf2;border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 10px}
+    .person-chip input{width:74px;border:0;background:transparent;outline:0;color:var(--ink);font-weight:700;font-size:12px;min-width:0}
+    .person-chip button{border:0;background:transparent;color:#aa8f7b;cursor:pointer;font-size:14px;line-height:1;padding:2px}
+    .expense-form{display:grid;grid-template-columns:minmax(170px,1.6fr) minmax(120px,.8fr) minmax(150px,.9fr) auto;gap:10px;align-items:end}
+    .field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px 2px}
+    .field input[type="text"],.field input[type="number"],.field select{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;background:#fffefa;padding:0 12px;color:var(--ink);outline:none}
+    .field input:focus,.field select:focus{border-color:#b8a894;box-shadow:0 0 0 3px rgba(157,75,67,.07)}
+    .participant-picker{grid-column:1/-1;padding:11px 12px;border:1px dashed var(--line);border-radius:14px;background:#fbf8f1}
+    .participant-picker-title{font-size:11px;color:var(--muted);margin-bottom:7px}
+    .participant-list{display:flex;gap:8px;flex-wrap:wrap}
+    .participant-option{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fffefa;cursor:pointer;font-size:12px;user-select:none}
+    .participant-option input{accent-color:var(--green)}
+    .primary-btn,.ghost-btn,.danger-btn{border:1px solid var(--line);border-radius:12px;padding:10px 13px;cursor:pointer;min-height:42px}
+    .primary-btn{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:800}
+    .ghost-btn{background:#fffefa;color:var(--ink)}
+    .danger-btn{background:#fff4f1;color:#8f4b43;border-color:#e8c8bf}
+    .expense-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+    .expense-list{margin-top:16px;border-top:1px solid var(--line)}
+    .expense-row{display:grid;grid-template-columns:minmax(0,1.6fr) 110px 120px minmax(150px,1.2fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+    .expense-row .name{font-weight:800;min-width:0;overflow-wrap:anywhere}
+    .expense-row .meta{font-size:11px;color:var(--muted);margin-top:2px}
+    .expense-row .amount{font-weight:900;text-align:right}
+    .expense-row .payer,.expense-row .shared{font-size:12px;color:#5f5a52;overflow-wrap:anywhere}
+    .expense-row .row-actions{text-align:right;white-space:nowrap}
+    .summary-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:18px}
+    .expense-summary,.settlement-box{border:1px solid var(--line);border-radius:16px;background:#fbf8f1;padding:14px}
+    .expense-summary h4,.settlement-box h4{margin:0 0 10px;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:18px}
+    .balance-row{display:grid;grid-template-columns:minmax(0,1fr) 80px 80px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:12px}
+    .balance-row:last-child{border-bottom:0}
+    .balance-row .b-name{font-weight:800;overflow-wrap:anywhere}
+    .balance-row .num{text-align:right}
+    .positive{color:var(--green);font-weight:900}.negative{color:var(--red);font-weight:900}.zero{color:var(--muted)}
+    .settlement-list{display:grid;gap:8px}.settlement-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 11px;border-radius:12px;background:#fffefa;border:1px solid var(--line);font-size:12px}.settlement-item b{font-size:13px}.settlement-empty{font-size:12px;color:var(--muted)}
+    .expense-empty{padding:16px 4px;color:var(--muted);font-size:12px;text-align:center}
+    .expense-footer{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.55}
+    .overall-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef1eb;border:1px solid #d6dfd7;color:#4f5d53;font-size:11px}
+
+
+    /* overall trip ledger */
+    .overall-panel .card{margin-bottom:18px}
+    .overall-hero{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:stretch}
+    .overall-kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);font-weight:900}
+    .overall-title{font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:30px;line-height:1.2;margin:6px 0 4px}
+    .overall-desc{margin:0;color:var(--muted);font-size:13px}
+    .overall-number{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;padding:6px 2px}
+    .overall-number b{font-size:34px;line-height:1.1}
+    .overall-number span{font-size:11px;color:var(--muted);margin-top:5px}
+    .overall-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+    .overall-stat{background:#faf7f0;border:1px solid var(--line);border-radius:15px;padding:12px}
+    .overall-stat b{display:block;font-size:18px}.overall-stat span{font-size:11px;color:var(--muted)}
+    .overall-person-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .overall-person{border:1px solid var(--line);border-radius:16px;background:#fffefa;padding:13px}
+    .overall-person-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+    .overall-person-head b{font-size:15px}.overall-person-head span{font-size:11px;color:var(--muted)}
+    .overall-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .overall-mini{background:#fbf8f1;border:1px solid #e8dfd2;border-radius:11px;padding:8px}
+    .overall-mini span{display:block;color:var(--muted);font-size:10px}.overall-mini b{font-size:13px}
+    .daily-total-table{width:100%;border-collapse:collapse;font-size:12px}
+    .daily-total-table th,.daily-total-table td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}
+    .daily-total-table th:last-child,.daily-total-table td:last-child{text-align:right}
+    .daily-total-table tr:last-child td{border-bottom:0}
+    .daily-total-table .sum{font-weight:900}
+    .overall-settlement-note{background:#eef1eb;border:1px solid #d6dfd7;color:#4f5d53;border-radius:15px;padding:11px 12px;font-size:12px;line-height:1.55;margin-bottom:10px}
+    .overall-action-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .overall-action-row .ghost-btn{font-size:12px}
+
+    @media (max-width: 680px){
+      .overall-hero{grid-template-columns:minmax(0,1fr)}
+      .overall-number{align-items:flex-start;text-align:left;padding-top:0}
+      .overall-title{font-size:24px}
+      .overall-number b{font-size:28px}
+      .overall-stat-grid{grid-template-columns:1fr 1fr}
+      .overall-stat-grid .overall-stat:last-child{grid-column:1/-1}
+      .overall-person-grid{grid-template-columns:minmax(0,1fr)}
+      .daily-total-table{font-size:11px}
+      .daily-total-table th,.daily-total-table td{padding:8px 4px}
+      .overall-action-row{justify-content:stretch}
+      .overall-action-row .ghost-btn{flex:1 1 180px}
+    }
+
     /* Responsive refinements */
     @media (max-width: 980px){
       .wrap{padding-left:18px;padding-right:18px}
@@ -76,6 +163,10 @@
       .hero-card{width:100%;min-width:0}
       .side-stack{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
       .map-card{order:-1}
+      .expense-form{grid-template-columns:minmax(0,1.2fr) minmax(110px,.7fr);}
+      .expense-form .field:nth-child(3){grid-column:1/-1}
+      .expense-actions{grid-column:1/-1;justify-content:flex-start}
+      .expense-row{grid-template-columns:minmax(0,1.4fr) 100px 90px minmax(120px,1fr) auto}
     }
 
     @media (max-width: 680px){
@@ -137,6 +228,16 @@
       .map-note{font-size:11px;line-height:1.5}
       .mini-table{font-size:12px}
       .footer{font-size:10.5px;line-height:1.6;padding:0 4px}
+      .expense-form{grid-template-columns:minmax(0,1fr) minmax(110px,.65fr);gap:9px}
+      .expense-form .field:nth-child(3){grid-column:1/-1}
+      .expense-actions{grid-column:1/-1;justify-content:stretch}.expense-actions .primary-btn{width:100%}
+      .participant-picker{grid-column:1/-1}
+      .summary-grid{grid-template-columns:minmax(0,1fr);gap:10px}
+      .expense-row{grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:11px 0}
+      .expense-row .payer,.expense-row .shared{font-size:11px}
+      .expense-row .amount{grid-column:2;grid-row:1;text-align:right}.expense-row .row-actions{grid-column:2;text-align:right}
+      .expense-row > .payer{grid-column:1;grid-row:2}.expense-row > .shared{display:none}
+      .expense-footer{font-size:10.5px}
     }
 
     @media (max-width: 430px){
@@ -172,6 +273,11 @@
       .stat span{font-size:9.5px}
       .route-node{min-width:110px}
       .footer{font-size:10px}
+      .expense-head h3{font-size:19px}.expense-head p{font-size:11px}
+      .expense-form{grid-template-columns:1fr 1fr}.expense-form .field:nth-child(2){grid-column:2}
+      .person-chip input{width:58px}.person-chip{padding:5px 7px 5px 9px}
+      .balance-row{grid-template-columns:minmax(0,1fr) 72px 72px;font-size:11px}.balance-row .num{font-size:10px}
+      .settlement-item{font-size:11px}.settlement-item b{font-size:12px}
     }
 
     @media (hover:none){
@@ -364,6 +470,241 @@
       return url;
     }
 
+
+    const PEOPLE_KEY='tokyo-trip-people-v1';
+    const DEFAULT_PEOPLE=['A','B','C','D'];
+    const loadPeople=()=>{
+      try{
+        const raw=localStorage.getItem(PEOPLE_KEY); const arr=raw?JSON.parse(raw):null;
+        return Array.isArray(arr)&&arr.length>=2 ? arr.slice(0,8).map(v=>String(v||'').trim()||'未命名') : [...DEFAULT_PEOPLE];
+      }catch{return [...DEFAULT_PEOPLE];}
+    };
+    let people=loadPeople();
+    const savePeople=()=>localStorage.setItem(PEOPLE_KEY,JSON.stringify(people));
+    const expenseKey=dayIndex=>`tokyo-expenses-${dayIndex}`;
+    const loadExpenses=dayIndex=>{
+      try{ const raw=localStorage.getItem(expenseKey(dayIndex)); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }
+      catch{return []}
+    };
+    const saveExpenses=(dayIndex,arr)=>localStorage.setItem(expenseKey(dayIndex),JSON.stringify(arr));
+    const money=n=>`¥${Math.round(Number(n)||0).toLocaleString('ja-JP')}`;
+
+    function calcCombinedBalances(){
+      const paid=Object.fromEntries(people.map(p=>[p,0]));
+      const owed=Object.fromEntries(people.map(p=>[p,0]));
+      const dayTotals=days.map((d,dayIndex)=>{
+        const expenses=loadExpenses(dayIndex);
+        let total=0;
+        expenses.forEach(e=>{
+          const amount=Number(e.amount)||0;
+          total+=amount;
+          if(paid[e.payer]==null) paid[e.payer]=0;
+          paid[e.payer]+=amount;
+          const ps=(e.participants||[]).filter(p=>owed[p]!=null);
+          if(!ps.length) return;
+          const cents=Math.round(amount*100);
+          const base=Math.floor(cents/ps.length);
+          const rem=cents-base*ps.length;
+          ps.forEach((p,i)=>{ owed[p]+=(base+(i<rem?1:0))/100; });
+        });
+        return {label:d.label,total,count:expenses.length};
+      });
+      const balances=Object.fromEntries(people.map(p=>[p,(paid[p]||0)-(owed[p]||0)]));
+      return {paid,owed,balances,dayTotals};
+    }
+
+    function buildSettlementRows(balances){
+      const debtors=people.map(p=>[p,Math.max(0,-(balances[p]||0))]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]);
+      const creditors=people.map(p=>[p,Math.max(0,(balances[p]||0))]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]);
+      const tx=[]; let i=0,j=0;
+      while(i<debtors.length&&j<creditors.length){
+        const amt=Math.min(debtors[i][1],creditors[j][1]);
+        if(amt>0.005) tx.push({from:debtors[i][0],to:creditors[j][0],amount:Math.round(amt)});
+        debtors[i][1]-=amt; creditors[j][1]-=amt;
+        if(debtors[i][1]<=0.005)i++;
+        if(creditors[j][1]<=0.005)j++;
+      }
+      return tx;
+    }
+
+    function overallLedgerTemplate(){
+      return `<section class="panel overall-panel" id="overall-panel">
+        <div class="card">
+          <div class="overall-hero">
+            <div>
+              <div class="overall-kicker">TRIP TOTAL</div>
+              <div class="overall-title">💰 六天總帳｜旅行結算</div>
+              <p class="overall-desc">把 10/14～10/19 每一天的記帳全部加總。每天仍然獨立記錄，這裡只負責看「整趟旅行最後誰要給誰多少」。</p>
+            </div>
+            <div class="overall-number"><b data-overall-total>¥0</b><span>目前 6 天共同花費</span></div>
+          </div>
+          <div class="overall-stat-grid">
+            <div class="overall-stat"><b data-overall-count>0</b><span>筆記帳</span></div>
+            <div class="overall-stat"><b data-overall-average>¥0</b><span>平均每人應分攤</span></div>
+            <div class="overall-stat"><b data-overall-people>4 人</b><span>目前成員數</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="day-title"><div><div class="eyebrow">FINAL BALANCE</div><h2>整趟旅行結算</h2><p class="sub">「已付」－「應付」＝最後應收／應還</p></div><div class="badge">六天合併</div></div>
+          <div class="overall-person-grid" data-overall-people-grid></div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="day-title"><div><div class="eyebrow">SETTLEMENT</div><h2>最後誰要給誰？</h2><p class="sub">系統會用最少轉帳次數，整理成最後結算方式。</p></div></div>
+            <div class="overall-settlement-note">這裡和每日結算不同：同一個人今天可能要付錢、明天又是應收，但六天全部合併後，只看最後的淨額。</div>
+            <div class="settlement-list" data-overall-settlement></div>
+            <div class="overall-action-row"><button type="button" class="ghost-btn" data-copy-settlement>📋 複製結算文字</button><button type="button" class="ghost-btn" data-clear-all-expenses>🗑️ 清除六天記帳</button></div>
+          </div>
+          <div class="card">
+            <div class="day-title"><div><div class="eyebrow">DAY BY DAY</div><h2>每天花多少？</h2><p class="sub">快速確認哪一天花最多。</p></div></div>
+            <div data-overall-daily></div>
+          </div>
+        </div>
+      </section>`;
+    }
+
+    function expenseTrackerTemplate(dayIndex,label){
+      return `<div class="card expense-card" data-expense-day="${dayIndex}">
+        <div class="expense-head">
+          <div><div class="eyebrow">DAILY EXPENSES</div><h3>💰 ${label}｜今日記帳</h3><p>每一天獨立計算，輸入「誰付錢」＋「哪些人一起分攤」，系統會自動算出最後誰要給誰多少。</p></div>
+          <div class="overall-badge">📌 資料只存在這台瀏覽器</div>
+        </div>
+        <div class="people-editor" data-people-editor></div>
+        <div class="expense-form">
+          <div class="field"><label>花費項目</label><input type="text" data-field="item" placeholder="例如：晚餐、車資、藥妝"></div>
+          <div class="field"><label>金額（日圓）</label><input type="number" data-field="amount" min="0" step="1" placeholder="0"></div>
+          <div class="field"><label>誰先付款</label><select data-field="payer"></select></div>
+          <div class="expense-actions"><button class="primary-btn" type="button" data-add-expense>＋ 新增</button></div>
+          <div class="participant-picker"><div class="participant-picker-title">哪些人要分攤這筆？（預設全員）</div><div class="participant-list" data-participants></div></div>
+        </div>
+        <div class="expense-list" data-expense-list></div>
+        <div class="summary-grid">
+          <div class="expense-summary"><h4>今日結算</h4><div data-balance></div></div>
+          <div class="settlement-box"><h4>建議怎麼還</h4><div class="settlement-list" data-settlement></div></div>
+        </div>
+        <div class="expense-footer">算法：每筆花費會平均分給勾選的人；「已付」減掉「應付」就是最後應收／應還。金額以日圓整數計算，若除不盡會自動四捨五入，最終以總額校正。</div>
+      </div>`;
+    }
+
+    function renderPeopleEditor(root, dayIndex){
+      const editor=root.querySelector('[data-people-editor]');
+      editor.innerHTML=people.map((name,i)=>`<div class="person-chip"><span>👤</span><input aria-label="成員${i+1}名稱" value="${escapeHtml(name)}" data-person-index="${i}"><button type="button" title="刪除成員" data-remove-person="${i}">×</button></div>`).join('') + (people.length<8?`<button class="ghost-btn" type="button" data-add-person>＋ 成員</button>`:'');
+      editor.querySelectorAll('input[data-person-index]').forEach(input=>input.addEventListener('change',e=>{
+        const i=Number(e.target.dataset.personIndex); const v=e.target.value.trim()||`成員${i+1}`; people[i]=v; savePeople(); refreshAllExpenseUI();
+      }));
+      editor.querySelectorAll('[data-remove-person]').forEach(btn=>btn.addEventListener('click',()=>{
+        if(people.length<=2){alert('至少保留 2 位成員。');return;}
+        const i=Number(btn.dataset.removePerson); const removed=people[i];
+        const hasExpense=days.some((_,di)=>loadExpenses(di).some(e=>e.payer===removed||e.participants?.includes(removed)));
+        if(hasExpense){ alert(`「${removed}」已經出現在記帳資料中，請先把相關帳目刪除或改成其他成員，再刪除這位成員。`); return; }
+        people.splice(i,1); savePeople(); refreshAllExpenseUI();
+      }));
+      const add=editor.querySelector('[data-add-person]'); if(add) add.addEventListener('click',()=>{
+        const next=String.fromCharCode(65+people.length); people.push(next); savePeople(); refreshAllExpenseUI();
+      });
+    }
+
+    function escapeHtml(v){return String(v).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));}
+
+    function ensureParticipants(root){
+      const wrap=root.querySelector('[data-participants]');
+      const old=[...wrap.querySelectorAll('input:checked')].map(x=>x.value);
+      const keepAll = old.length===0 || !old.some(v=>people.includes(v));
+      wrap.innerHTML=people.map(p=>`<label class="participant-option"><input type="checkbox" value="${escapeHtml(p)}" ${keepAll||old.includes(p)?'checked':''}>${escapeHtml(p)}</label>`).join('');
+    }
+
+    function renderExpenseRows(root,dayIndex){
+      const list=root.querySelector('[data-expense-list]'); const expenses=loadExpenses(dayIndex);
+      if(!expenses.length){list.innerHTML='<div class="expense-empty">今天還沒有記帳，先新增第一筆吧 ✍️</div>';return;}
+      list.innerHTML=expenses.map((e,idx)=>`<div class="expense-row">
+        <div><div class="name">${escapeHtml(e.item||'未命名')}</div><div class="meta">${escapeHtml(e.participants.join('、'))} 分攤</div></div>
+        <div class="payer">由 <b>${escapeHtml(e.payer)}</b> 先付</div>
+        <div class="shared">${e.participants.length} 人</div>
+        <div class="amount">${money(e.amount)}</div>
+        <div class="row-actions"><button class="danger-btn" type="button" data-delete-expense="${idx}">刪除</button></div>
+      </div>`).join('');
+      list.querySelectorAll('[data-delete-expense]').forEach(btn=>btn.addEventListener('click',()=>{
+        const arr=loadExpenses(dayIndex); arr.splice(Number(btn.dataset.deleteExpense),1); saveExpenses(dayIndex,arr); renderExpenseDay(dayIndex);
+      }));
+    }
+
+    function calcBalances(dayIndex){
+      const expenses=loadExpenses(dayIndex); const paid=Object.fromEntries(people.map(p=>[p,0])); const owed=Object.fromEntries(people.map(p=>[p,0]));
+      expenses.forEach(e=>{ const amount=Number(e.amount)||0; if(paid[e.payer]==null) paid[e.payer]=0; paid[e.payer]+=amount; const ps=(e.participants||[]).filter(p=>owed[p]!=null); if(!ps.length)return; const cents=Math.round(amount*100); const base=Math.floor(cents/ps.length); let rem=cents-base*ps.length; ps.forEach((p,i)=>{owed[p]+= (base+(i<rem?1:0))/100;}); });
+      const balances=Object.fromEntries(people.map(p=>[p,(paid[p]||0)-(owed[p]||0)]));
+      return {paid,owed,balances};
+    }
+
+    function renderSummary(root,dayIndex){
+      const {paid,owed,balances}=calcBalances(dayIndex); const balanceBox=root.querySelector('[data-balance]');
+      balanceBox.innerHTML=people.map(p=>{const b=balances[p]||0; const cls=b>0.5?'positive':b<-0.5?'negative':'zero'; const label=b>0.5?'應收':b<-0.5?'應付':'已結清'; return `<div class="balance-row"><div class="b-name">${escapeHtml(p)} <span class="sub">${label}</span></div><div class="num">付 ${money(paid[p]||0)}</div><div class="num ${cls}">${b>0?'+':''}${money(b)}</div></div>`}).join('');
+      const list=root.querySelector('[data-settlement]'); const debtors=people.map(p=>[p,Math.max(0,-balances[p])]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]); const creditors=people.map(p=>[p,Math.max(0,balances[p])]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]); const tx=[]; let i=0,j=0;
+      while(i<debtors.length&&j<creditors.length){const amt=Math.min(debtors[i][1],creditors[j][1]); if(amt>0.005) tx.push(`<div class="settlement-item"><span><b>${escapeHtml(debtors[i][0])}</b> → <b>${escapeHtml(creditors[j][0])}</b></span><b>${money(amt)}</b></div>`); debtors[i][1]-=amt; creditors[j][1]-=amt; if(debtors[i][1]<=0.005)i++; if(creditors[j][1]<=0.005)j++;}
+      list.innerHTML=tx.length?tx.join(''):'<div class="settlement-empty">今天不用互相還錢，剛好打平 ✨</div>';
+    }
+
+    function renderExpenseDay(dayIndex){
+      const root=document.querySelector(`[data-expense-day="${dayIndex}"]`); if(!root)return;
+      renderPeopleEditor(root,dayIndex); ensureParticipants(root);
+      const payer=root.querySelector('[data-field="payer"]'); const current=payer.value; payer.innerHTML=people.map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join(''); if(people.includes(current)) payer.value=current;
+      renderExpenseRows(root,dayIndex); renderSummary(root,dayIndex);
+      const add=root.querySelector('[data-add-expense]'); add.onclick=()=>{
+        const item=root.querySelector('[data-field="item"]').value.trim(); const amount=Math.round(Number(root.querySelector('[data-field="amount"]').value)||0); const p=root.querySelector('[data-field="payer"]').value; const participants=[...root.querySelectorAll('[data-participants] input:checked')].map(x=>x.value);
+        if(!item){alert('請先填寫花費項目。');return;} if(!amount||amount<0){alert('請輸入正確的金額。');return;} if(!p){alert('請選擇付款人。');return;} if(!participants.length){alert('至少選 1 位分攤者。');return;}
+        const arr=loadExpenses(dayIndex); arr.push({item,amount,payer:p,participants,createdAt:Date.now()}); saveExpenses(dayIndex,arr); root.querySelector('[data-field="item"]').value=''; root.querySelector('[data-field="amount"]').value=''; renderExpenseDay(dayIndex);
+      };
+    }
+
+    function renderOverall(){
+      const panel=document.getElementById('overall-panel');
+      if(!panel)return;
+      const {paid,owed,balances,dayTotals}=calcCombinedBalances();
+      const total=dayTotals.reduce((sum,d)=>sum+d.total,0);
+      const count=dayTotals.reduce((sum,d)=>sum+d.count,0);
+      panel.querySelector('[data-overall-total]').textContent=money(total);
+      panel.querySelector('[data-overall-count]').textContent=count;
+      panel.querySelector('[data-overall-average]').textContent=money(people.length?total/people.length:0);
+      panel.querySelector('[data-overall-people]').textContent=`${people.length} 人`;
+
+      panel.querySelector('[data-overall-people-grid]').innerHTML=people.map(p=>{
+        const b=balances[p]||0;
+        const cls=b>0.5?'positive':b<-0.5?'negative':'zero';
+        const label=b>0.5?'應收':b<-0.5?'應付':'已結清';
+        return `<div class="overall-person"><div class="overall-person-head"><b>${escapeHtml(p)}</b><span class="${cls}">${label} ${b>0?'+':''}${money(b)}</span></div><div class="overall-mini-grid"><div class="overall-mini"><span>總共已付</span><b>${money(paid[p]||0)}</b></div><div class="overall-mini"><span>總共應付</span><b>${money(owed[p]||0)}</b></div></div></div>`;
+      }).join('');
+
+      const tx=buildSettlementRows(balances);
+      const settlement=panel.querySelector('[data-overall-settlement]');
+      settlement.innerHTML=tx.length?tx.map(t=>`<div class="settlement-item"><span><b>${escapeHtml(t.from)}</b> → <b>${escapeHtml(t.to)}</b></span><b>${money(t.amount)}</b></div>`).join(''):'<div class="settlement-empty">目前沒有需要互相還錢的帳目，整趟剛好打平 ✨</div>';
+
+      const daily=panel.querySelector('[data-overall-daily]');
+      daily.innerHTML=`<table class="daily-total-table"><thead><tr><th>日期</th><th>筆數</th><th>總花費</th></tr></thead><tbody>${dayTotals.map(d=>`<tr><td>${escapeHtml(d.label)}</td><td>${d.count}</td><td class="sum">${money(d.total)}</td></tr>`).join('')}</tbody></table>`;
+
+      const copyBtn=panel.querySelector('[data-copy-settlement]');
+      copyBtn.onclick=async()=>{
+        const text=tx.length?['東京 6 天旅行｜最終結算',...tx.map(t=>`${t.from} → ${t.to} ${money(t.amount)}`)].join('\n'):'東京 6 天旅行｜目前沒有需要互相還錢的帳目。';
+        try{await navigator.clipboard.writeText(text);alert('已複製六天總結算！');}
+        catch{alert(text);}
+      };
+      const clearBtn=panel.querySelector('[data-clear-all-expenses]');
+      clearBtn.onclick=()=>{
+        if(!confirm('確定要清除 10/14～10/19 的全部記帳嗎？這個動作會刪除六天的帳目，但不會影響行程。')) return;
+        days.forEach((_,i)=>localStorage.removeItem(expenseKey(i)));
+        refreshAllExpenseUI();
+      };
+    }
+
+    function refreshAllExpenseUI(){days.forEach((_,i)=>renderExpenseDay(i)); renderOverall();}
+
+    const overallButton=document.createElement('button');
+    overallButton.className='day-btn';
+    overallButton.textContent='💰 六天總帳';
+    dayNav.appendChild(overallButton);
+    panels.insertAdjacentHTML('beforeend', overallLedgerTemplate());
+    overallButton.addEventListener('click',showOverall);
+
     days.forEach((d,i)=>{
       const btn=document.createElement('button');
       btn.className='day-btn'+(i===0?' active':'');
@@ -393,13 +734,31 @@
           <div class="side-stack">${d.side}
             <div class="card side-card"><h3>今日地圖動線</h3><div class="route-strip">${d.places.map((p,idx)=>`${idx?'<span class="route-arrow">→</span>':''}<div class="route-node"><b>${idx+1}. ${p[0]}</b>${p[3]}</div>`).join('')}</div><div class="map-note">地圖直接使用 Google Maps；下方按鈕可開啟各景點或整天的即時路線。</div></div>
           </div>
-        </div>`;
+        </div>
+        ${expenseTrackerTemplate(i, d.label)}
+      `;
       panels.appendChild(panel);
     });
 
+
+    // Build each day's independent expense ledger and restore saved data.
+    setTimeout(()=>refreshAllExpenseUI(),0);
+
+    function setActiveNav(index){
+      [...dayNav.children].forEach((b,j)=>b.classList.toggle('active',j===index));
+    }
+
     function showDay(i){
-      document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i));
-      [...dayNav.children].forEach((b,j)=>b.classList.toggle('active',j===i));
+      document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i+1));
+      setActiveNav(i+1);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function showOverall(){
+      document.querySelectorAll('.panel').forEach((p)=>p.classList.remove('active'));
+      const panel=document.getElementById('overall-panel');
+      if(panel){panel.classList.add('active'); renderOverall();}
+      setActiveNav(0);
       window.scrollTo({top:0,behavior:'smooth'});
     }
 

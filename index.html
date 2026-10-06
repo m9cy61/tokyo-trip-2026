@@ -352,6 +352,45 @@
     }
 
 
+    /* Final desktop stability pass: keep nested horizontal strips inside their cards. */
+    .route-strip-wrap{width:100%;min-width:0;max-width:100%;overflow:hidden}
+    .route-strip{width:100%;min-width:0;max-width:100%;overscroll-behavior-x:contain}
+    .notice{white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+    .side-stack .card{overflow:hidden}
+    .route-node{overflow-wrap:anywhere;word-break:break-word}
+    .expense-form,.expense-row,.participant-picker,.participant-list,.people-editor{min-width:0}
+    .people-editor{overflow:hidden}
+    .person-chip{min-width:0;flex:0 1 auto}
+
+    /* Shared Supabase ledger */
+    .cloud-card{background:linear-gradient(180deg,#fffdf8 0%,#f8f5ee 100%)}
+    .cloud-status{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .cloud-status-main{min-width:0}
+    .cloud-status-title{font-weight:900;font-size:15px}
+    .cloud-status-text{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+    .cloud-actions{display:grid;grid-template-columns:minmax(130px,180px) minmax(160px,1fr) auto;gap:8px;align-items:end;margin-top:12px}
+    .cloud-actions .field{min-width:0}
+    .cloud-actions .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
+    .cloud-actions input,.cloud-actions select{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;background:#fffefa;padding:9px 11px;color:var(--ink);outline:none}
+    .cloud-actions input:focus,.cloud-actions select:focus{border-color:#b8a894;box-shadow:0 0 0 3px rgba(157,75,67,.07)}
+    .cloud-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .cloud-btns .primary-btn,.cloud-btns .ghost-btn{white-space:nowrap}
+    .cloud-code{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border:1px dashed #cfbfad;border-radius:12px;background:#fff8ed;font-size:12px;max-width:100%;overflow-wrap:anywhere}
+    .cloud-code b{font-size:14px;letter-spacing:.08em}
+    .cloud-members{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .cloud-member-chip{padding:5px 8px;border-radius:999px;background:#eef1eb;border:1px solid #d6dfd7;color:#4f5d53;font-size:11px}
+    .sync-on{color:var(--green);font-weight:900}.sync-off{color:var(--muted);font-weight:900}.sync-warn{color:var(--red);font-weight:900}
+    .expense-cloud-badge{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:999px;border:1px solid var(--line);background:#fffefa;color:#5f5a52;font-size:11px;white-space:nowrap}
+    .person-chip.readonly{justify-content:flex-start;padding-right:11px}
+
+    @media (max-width:680px){
+      .cloud-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+      .cloud-actions .field:nth-child(2){grid-column:1/-1}
+      .cloud-btns{grid-column:1/-1}
+      .cloud-btns button{flex:1 1 150px}
+      .cloud-code{width:100%}
+    }
+
     /* Desktop / laptop overflow hardening */
     .grid, .grid > *, .route, .stop, .stop-body, .side-stack, .side-card,
     .map-card, .expense-card, .expense-form, .expense-row, .summary-grid,
@@ -415,6 +454,7 @@
     <div class="footer">地圖改用 Google Maps 嵌入；門市／活動時間、交通班次與票券規則請於出發前再次確認。<br>行程中的「查看 Google Maps」按鈕可開啟即時導航與路線。</div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const days = [
       {
@@ -618,6 +658,13 @@
 
     const PEOPLE_KEY='tokyo-trip-people-v1';
     const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
+    const CLOUD_SESSION_KEY='tokyo-cloud-session-v1';
+    const SUPABASE_URL='PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_PUBLISHABLE_KEY='PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE';
+    const TRIP_NAME='東京 2026｜10/14–10/19';
+    const isSupabaseConfigured=SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
+    const sbClient=isSupabaseConfigured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;
+
     const loadPeople=()=>{
       try{
         const raw=localStorage.getItem(PEOPLE_KEY); const arr=raw?JSON.parse(raw):null;
@@ -627,34 +674,174 @@
     let people=loadPeople();
     const savePeople=()=>localStorage.setItem(PEOPLE_KEY,JSON.stringify(people));
     const expenseKey=dayIndex=>`tokyo-expenses-${dayIndex}`;
-    const loadExpenses=dayIndex=>{
+    const localLoadExpenses=dayIndex=>{
       try{ const raw=localStorage.getItem(expenseKey(dayIndex)); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }
       catch{return []}
     };
+    let cloudTripId=localStorage.getItem(CLOUD_SESSION_KEY+'_tripId')||null;
+    let cloudInviteCode=localStorage.getItem(CLOUD_SESSION_KEY+'_invite')||'';
+    let cloudDisplayName=localStorage.getItem(CLOUD_SESSION_KEY+'_name')||'';
+    let cloudExpenses=Object.fromEntries(days.map((_,i)=>[i,[]]));
+    let cloudMembers=[];
+    let cloudChannel=null;
+    let cloudBusy=false;
 
-    // If this browser used the previous A/B/C/D defaults, migrate those names
-    // so existing saved expenses keep working with the new Chinese default names.
+    function getCloudSession(){
+      try{return JSON.parse(localStorage.getItem(CLOUD_SESSION_KEY)||'null')}catch{return null}
+    }
+    function saveCloudSession(session){
+      if(!session){
+        localStorage.removeItem(CLOUD_SESSION_KEY);
+        localStorage.removeItem(CLOUD_SESSION_KEY+'_tripId');
+        localStorage.removeItem(CLOUD_SESSION_KEY+'_invite');
+        localStorage.removeItem(CLOUD_SESSION_KEY+'_name');
+        cloudTripId=null; cloudInviteCode=''; cloudDisplayName='';
+        return;
+      }
+      localStorage.setItem(CLOUD_SESSION_KEY,JSON.stringify(session));
+      localStorage.setItem(CLOUD_SESSION_KEY+'_tripId',session.tripId);
+      localStorage.setItem(CLOUD_SESSION_KEY+'_invite',session.inviteCode||'');
+      localStorage.setItem(CLOUD_SESSION_KEY+'_name',session.displayName||'');
+      cloudTripId=session.tripId; cloudInviteCode=session.inviteCode||''; cloudDisplayName=session.displayName||'';
+    }
+
+    // If this browser used the previous A/B/C/D defaults, migrate those names locally.
     function migrateLegacyPeople(){
       const legacy=['A','B','C','D'];
       const isLegacy = Array.isArray(people) && people.length===4 && people.every((v,i)=>v===legacy[i]);
       if(!isLegacy) return;
       const map=Object.fromEntries(legacy.map((v,i)=>[v,DEFAULT_PEOPLE[i]]));
       days.forEach((_,dayIndex)=>{
-        const arr=loadExpenses(dayIndex);
+        const arr=localLoadExpenses(dayIndex);
         if(!arr.length) return;
-        const migrated=arr.map(e=>({
-          ...e,
-          payer:map[e.payer]||e.payer,
-          participants:(e.participants||[]).map(p=>map[p]||p)
-        }));
+        const migrated=arr.map(e=>({...e,payer:map[e.payer]||e.payer,participants:(e.participants||[]).map(p=>map[p]||p)}));
         localStorage.setItem(expenseKey(dayIndex),JSON.stringify(migrated));
       });
-      people=[...DEFAULT_PEOPLE];
-      savePeople();
+      people=[...DEFAULT_PEOPLE]; savePeople();
     }
     migrateLegacyPeople();
-    const saveExpenses=(dayIndex,arr)=>localStorage.setItem(expenseKey(dayIndex),JSON.stringify(arr));
+
+    function normalizedCloudExpense(row){
+      return {id:row.id,item:row.item,amount:Number(row.amount)||0,payer:row.payer,participants:Array.isArray(row.participants)?row.participants:[],createdAt:row.created_at};
+    }
+    function loadExpenses(dayIndex){
+      if(cloudTripId) return cloudExpenses[dayIndex]||[];
+      return localLoadExpenses(dayIndex);
+    }
+    function saveLocalExpenses(dayIndex,arr){localStorage.setItem(expenseKey(dayIndex),JSON.stringify(arr));}
     const money=n=>`¥${Math.round(Number(n)||0).toLocaleString('ja-JP')}`;
+
+    function cloudStatusText(){
+      if(!isSupabaseConfigured) return {cls:'sync-off',label:'🗃️ 目前為本機記帳',detail:'要讓四支手機共享，請先建立 Supabase 專案並填入網址與 Publishable Key。'};
+      if(!cloudTripId) return {cls:'sync-warn',label:'☁️ Supabase 已連線，尚未加入共同帳本',detail:'先由一支手機建立共同帳本，再把邀請碼給其他三人。'};
+      return {cls:'sync-on',label:'☁️ 四人共享記帳中',detail:`目前帳本：${TRIP_NAME}｜登入身分：${cloudDisplayName||'已加入'}｜所有成員看到的是同一份雲端資料。`};
+    }
+
+    async function ensureAnonymousAuth(){
+      if(!sbClient) return false;
+      const {data,error}=await sbClient.auth.getSession();
+      if(error) throw error;
+      if(data.session) return true;
+      const {error:signError}=await sbClient.auth.signInAnonymously();
+      if(signError) throw signError;
+      return true;
+    }
+
+    async function createSharedTrip(displayName){
+      if(!sbClient) throw new Error('Supabase 尚未設定。');
+      if(!DEFAULT_PEOPLE.includes(displayName)) throw new Error('請從小王／小施／小郭／小羅中選擇。');
+      const {data,error}=await sbClient.rpc('create_trip',{p_name:TRIP_NAME,p_display_name:displayName});
+      if(error) throw error;
+      const row=Array.isArray(data)?data[0]:data;
+      saveCloudSession({tripId:row.trip_id,inviteCode:row.invite_code,displayName});
+    }
+
+    async function joinSharedTrip(displayName,inviteCode){
+      if(!sbClient) throw new Error('Supabase 尚未設定。');
+      if(!DEFAULT_PEOPLE.includes(displayName)) throw new Error('請從小王／小施／小郭／小羅中選擇。');
+      if(!inviteCode.trim()) throw new Error('請輸入 10 碼左右的邀請碼。');
+      const {data,error}=await sbClient.rpc('join_trip',{p_invite_code:inviteCode.trim().toUpperCase(),p_display_name:displayName});
+      if(error) throw error;
+      const row=Array.isArray(data)?data[0]:data;
+      saveCloudSession({tripId:row.trip_id,inviteCode:inviteCode.trim().toUpperCase(),displayName});
+    }
+
+    async function loadCloudMembers(){
+      if(!sbClient||!cloudTripId) return;
+      const {data,error}=await sbClient.from('trip_members').select('display_name').eq('trip_id',cloudTripId).order('joined_at');
+      if(error) throw error;
+      cloudMembers=(data||[]).map(r=>r.display_name);
+    }
+
+    async function loadCloudExpenses(){
+      if(!sbClient||!cloudTripId) return;
+      const {data,error}=await sbClient.from('trip_expenses').select('id,trip_id,day_index,item,amount,payer,participants,created_at').eq('trip_id',cloudTripId).order('created_at',{ascending:true});
+      if(error) throw error;
+      cloudExpenses=Object.fromEntries(days.map((_,i)=>[i,[]]));
+      (data||[]).forEach(row=>{if(cloudExpenses[row.day_index]) cloudExpenses[row.day_index].push(normalizedCloudExpense(row));});
+    }
+
+    function stopCloudRealtime(){
+      if(cloudChannel&&sbClient){sbClient.removeChannel(cloudChannel);cloudChannel=null;}
+    }
+    function startCloudRealtime(){
+      if(!sbClient||!cloudTripId) return;
+      stopCloudRealtime();
+      cloudChannel=sbClient.channel(`tokyo-expenses-${cloudTripId}`)
+        .on('postgres_changes',{event:'*',schema:'public',table:'trip_expenses',filter:`trip_id=eq.${cloudTripId}`},async()=>{
+          try{await loadCloudExpenses();refreshAllExpenseUI();}catch(err){console.error('Realtime refresh failed',err);}
+        })
+        .subscribe();
+    }
+
+    async function activateCloudSession(){
+      if(!sbClient||!cloudTripId) return;
+      people=[...DEFAULT_PEOPLE];
+      savePeople();
+      await loadCloudMembers();
+      await loadCloudExpenses();
+      startCloudRealtime();
+    }
+
+    function updateCloudUI(){
+      const s=cloudStatusText();
+      document.querySelectorAll('[data-cloud-status]').forEach(el=>{el.innerHTML=`<div class="cloud-status-title ${s.cls}">${s.label}</div><div class="cloud-status-text">${escapeHtml(s.detail)}</div>`;});
+      document.querySelectorAll('[data-cloud-code]').forEach(el=>{el.innerHTML=cloudTripId?`<span>🔑 邀請碼</span><b>${escapeHtml(cloudInviteCode)}</b><button type="button" class="ghost-btn" data-copy-cloud-code>複製</button>`:''; el.style.display=cloudTripId?'inline-flex':'none';});
+      document.querySelectorAll('[data-cloud-members]').forEach(el=>{el.innerHTML=cloudMembers.length?cloudMembers.map(n=>`<span class="cloud-member-chip">👤 ${escapeHtml(n)}</span>`).join(''):'<span class="sub">尚未建立／加入共享帳本</span>';});
+      document.querySelectorAll('.expense-cloud-badge').forEach(el=>{el.textContent=cloudTripId?'☁️ 四人共享':'🗃️ 本機記帳';});
+      const codeInput=document.querySelector('[data-cloud-invite-input]'); if(codeInput && cloudInviteCode) codeInput.value=cloudInviteCode;
+    }
+
+    function bindCloudUI(){
+      const createBtn=document.querySelector('[data-cloud-create]');
+      const joinBtn=document.querySelector('[data-cloud-join]');
+      const leaveBtn=document.querySelector('[data-cloud-leave]');
+      const copyCode=(btn)=>{
+        const text=cloudInviteCode||'';
+        if(!text) return;
+        navigator.clipboard?.writeText(text).then(()=>alert('已複製邀請碼，可以貼到四人群組！')).catch(()=>alert(text));
+      };
+      document.addEventListener('click',e=>{if(e.target.matches('[data-copy-cloud-code]'))copyCode(e.target);});
+      if(createBtn) createBtn.addEventListener('click',async()=>{
+        if(!sbClient){alert('目前還沒有 Supabase 設定。');return;}
+        if(cloudTripId){alert('這台手機已經加入共同帳本。');return;}
+        const name=document.querySelector('[data-cloud-display-name]')?.value||DEFAULT_PEOPLE[0];
+        try{cloudBusy=true;createBtn.disabled=true;await ensureAnonymousAuth();await createSharedTrip(name);await activateCloudSession();refreshAllExpenseUI();renderOverall();updateCloudUI();alert(`共同帳本建立完成！\n\n邀請碼：${cloudInviteCode}\n\n把這組邀請碼給另外三個人即可。`);}catch(err){console.error(err);alert(`建立共同帳本失敗：${err.message||err}`);}finally{cloudBusy=false;createBtn.disabled=false;}
+      });
+      if(joinBtn) joinBtn.addEventListener('click',async()=>{
+        if(!sbClient){alert('目前還沒有 Supabase 設定。');return;}
+        if(cloudTripId){alert('這台手機已經加入共同帳本。');return;}
+        const name=document.querySelector('[data-cloud-display-name]')?.value||DEFAULT_PEOPLE[0];
+        const code=document.querySelector('[data-cloud-invite-input]')?.value||'';
+        try{cloudBusy=true;joinBtn.disabled=true;await ensureAnonymousAuth();await joinSharedTrip(name,code);await activateCloudSession();refreshAllExpenseUI();renderOverall();updateCloudUI();alert(`已加入 ${TRIP_NAME}！`);}catch(err){console.error(err);alert(`加入共同帳本失敗：${err.message||err}`);}finally{cloudBusy=false;joinBtn.disabled=false;}
+      });
+      if(leaveBtn) leaveBtn.addEventListener('click',()=>{
+        if(!cloudTripId)return;
+        if(!confirm('確定要讓這台裝置退出目前共同帳本嗎？雲端帳目不會被刪除，之後可再用邀請碼加入。'))return;
+        stopCloudRealtime();saveCloudSession(null);cloudExpenses=Object.fromEntries(days.map((_,i)=>[i,[]]));cloudMembers=[];people=[...DEFAULT_PEOPLE];savePeople();refreshAllExpenseUI();renderOverall();updateCloudUI();
+      });
+      updateCloudUI();
+    }
 
     function calcCombinedBalances(){
       const paid=Object.fromEntries(people.map(p=>[p,0]));
@@ -663,16 +850,11 @@
         const expenses=loadExpenses(dayIndex);
         let total=0;
         expenses.forEach(e=>{
-          const amount=Number(e.amount)||0;
-          total+=amount;
-          if(paid[e.payer]==null) paid[e.payer]=0;
-          paid[e.payer]+=amount;
-          const ps=(e.participants||[]).filter(p=>owed[p]!=null);
-          if(!ps.length) return;
-          const cents=Math.round(amount*100);
-          const base=Math.floor(cents/ps.length);
-          const rem=cents-base*ps.length;
-          ps.forEach((p,i)=>{ owed[p]+=(base+(i<rem?1:0))/100; });
+          const amount=Number(e.amount)||0; total+=amount;
+          if(paid[e.payer]==null) paid[e.payer]=0; paid[e.payer]+=amount;
+          const ps=(e.participants||[]).filter(p=>owed[p]!=null); if(!ps.length)return;
+          const cents=Math.round(amount*100); const base=Math.floor(cents/ps.length); const rem=cents-base*ps.length;
+          ps.forEach((p,i)=>{owed[p]+=(base+(i<rem?1:0))/100;});
         });
         return {label:d.label,total,count:expenses.length};
       });
@@ -684,13 +866,7 @@
       const debtors=people.map(p=>[p,Math.max(0,-(balances[p]||0))]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]);
       const creditors=people.map(p=>[p,Math.max(0,(balances[p]||0))]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]);
       const tx=[]; let i=0,j=0;
-      while(i<debtors.length&&j<creditors.length){
-        const amt=Math.min(debtors[i][1],creditors[j][1]);
-        if(amt>0.005) tx.push({from:debtors[i][0],to:creditors[j][0],amount:Math.round(amt)});
-        debtors[i][1]-=amt; creditors[j][1]-=amt;
-        if(debtors[i][1]<=0.005)i++;
-        if(creditors[j][1]<=0.005)j++;
-      }
+      while(i<debtors.length&&j<creditors.length){const amt=Math.min(debtors[i][1],creditors[j][1]); if(amt>0.005) tx.push({from:debtors[i][0],to:creditors[j][0],amount:Math.round(amt)}); debtors[i][1]-=amt; creditors[j][1]-=amt; if(debtors[i][1]<=0.005)i++; if(creditors[j][1]<=0.005)j++;}
       return tx;
     }
 
@@ -698,178 +874,135 @@
       return `<section class="panel overall-panel" id="overall-panel">
         <div class="card">
           <div class="overall-hero">
-            <div>
-              <div class="overall-kicker">TRIP TOTAL</div>
-              <div class="overall-title">💰 六天總帳｜旅行結算</div>
-              <p class="overall-desc">把 10/14～10/19 每一天的記帳全部加總。每天仍然獨立記錄，這裡只負責看「整趟旅行最後誰要給誰多少」。</p>
-            </div>
+            <div><div class="overall-kicker">TRIP TOTAL</div><div class="overall-title">💰 六天總帳｜旅行結算</div><p class="overall-desc">把 10/14～10/19 每一天的記帳全部加總。每天仍然獨立記錄，這裡只負責看「整趟旅行最後誰要給誰多少」。</p></div>
             <div class="overall-number"><b data-overall-total>¥0</b><span>目前 6 天共同花費</span></div>
           </div>
-          <div class="overall-stat-grid">
-            <div class="overall-stat"><b data-overall-count>0</b><span>筆記帳</span></div>
-            <div class="overall-stat"><b data-overall-average>¥0</b><span>平均每人應分攤</span></div>
-            <div class="overall-stat"><b data-overall-people>4 人</b><span>目前成員數</span></div>
-          </div>
+          <div class="overall-stat-grid"><div class="overall-stat"><b data-overall-count>0</b><span>筆記帳</span></div><div class="overall-stat"><b data-overall-average>¥0</b><span>平均每人應分攤</span></div><div class="overall-stat"><b data-overall-people>4 人</b><span>目前成員數</span></div></div>
         </div>
 
-        <div class="card">
-          <div class="day-title"><div><div class="eyebrow">FINAL BALANCE</div><h2>整趟旅行結算</h2><p class="sub">「已付」－「應付」＝最後應收／應還</p></div><div class="badge">六天合併</div></div>
-          <div class="overall-person-grid" data-overall-people-grid></div>
+        <div class="card cloud-card" id="cloud-ledger-card">
+          <div class="day-title"><div><div class="eyebrow">CLOUD SHARED LEDGER</div><h2>☁️ 四人共享記帳</h2><p class="sub">同一個共同帳本後，四支手機都會看到相同的每日帳目與六天總帳。</p></div><div class="badge">Supabase</div></div>
+          <div class="cloud-status" data-cloud-status></div>
+          <div class="cloud-actions">
+            <div class="field"><label>我是誰</label><select data-cloud-display-name>${DEFAULT_PEOPLE.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('')}</select></div>
+            <div class="field"><label>加入時輸入邀請碼</label><input data-cloud-invite-input type="text" inputmode="text" autocomplete="off" placeholder="例如：A1B2C3D4E5"></div>
+            <div class="cloud-btns"><button type="button" class="primary-btn" data-cloud-create>建立共同帳本</button><button type="button" class="ghost-btn" data-cloud-join>加入共同帳本</button><button type="button" class="ghost-btn" data-cloud-leave>退出本機帳本</button></div>
+          </div>
+          <div class="cloud-code" data-cloud-code style="display:none"></div>
+          <div class="cloud-members" data-cloud-members></div>
+          <div class="expense-footer">目前版本使用 Supabase Anonymous Sign-In，不需要輸入 email 或密碼；每支裝置會記住自己的匿名工作階段。公開網站上的 Supabase Publishable Key 可以放在前端，但資料庫一定要配合 RLS，不能把 service_role key 放進網頁。</div>
         </div>
 
-        <div class="grid">
-          <div class="card">
-            <div class="day-title"><div><div class="eyebrow">SETTLEMENT</div><h2>最後誰要給誰？</h2><p class="sub">系統會用最少轉帳次數，整理成最後結算方式。</p></div></div>
-            <div class="overall-settlement-note">這裡和每日結算不同：同一個人今天可能要付錢、明天又是應收，但六天全部合併後，只看最後的淨額。</div>
-            <div class="settlement-list" data-overall-settlement></div>
-            <div class="overall-action-row"><button type="button" class="ghost-btn" data-copy-settlement>📋 複製結算文字</button><button type="button" class="ghost-btn" data-clear-all-expenses>🗑️ 清除六天記帳</button></div>
-          </div>
-          <div class="card">
-            <div class="day-title"><div><div class="eyebrow">DAY BY DAY</div><h2>每天花多少？</h2><p class="sub">快速確認哪一天花最多。</p></div></div>
-            <div data-overall-daily></div>
-          </div>
-        </div>
+        <div class="card"><div class="day-title"><div><div class="eyebrow">FINAL BALANCE</div><h2>整趟旅行結算</h2><p class="sub">「已付」－「應付」＝最後應收／應還</p></div><div class="badge">六天合併</div></div><div class="overall-person-grid" data-overall-people-grid></div></div>
+        <div class="grid"><div class="card"><div class="day-title"><div><div class="eyebrow">SETTLEMENT</div><h2>最後誰要給誰？</h2><p class="sub">系統會用最少轉帳次數，整理成最後結算方式。</p></div></div><div class="overall-settlement-note">這裡和每日結算不同：同一個人今天可能要付錢、明天又是應收，但六天全部合併後，只看最後的淨額。</div><div class="settlement-list" data-overall-settlement></div><div class="overall-action-row"><button type="button" class="ghost-btn" data-copy-settlement>📋 複製結算文字</button><button type="button" class="ghost-btn" data-clear-all-expenses>🗑️ 清除六天記帳</button></div></div><div class="card"><div class="day-title"><div><div class="eyebrow">DAY BY DAY</div><h2>每天花多少？</h2><p class="sub">快速確認哪一天花最多。</p></div></div><div data-overall-daily></div></div></div>
       </section>`;
     }
 
     function expenseTrackerTemplate(dayIndex,label){
       return `<div class="card expense-card" data-expense-day="${dayIndex}">
-        <div class="expense-head">
-          <div><div class="eyebrow">DAILY EXPENSES</div><h3>💰 ${label}｜今日記帳</h3><p>每一天獨立計算，輸入「誰付錢」＋「哪些人一起分攤」，系統會自動算出最後誰要給誰多少。</p></div>
-          <div class="overall-badge">📌 資料只存在這台瀏覽器</div>
-        </div>
+        <div class="expense-head"><div><div class="eyebrow">DAILY EXPENSES</div><h3>💰 ${label}｜今日記帳</h3><p>每一天獨立計算，輸入「誰付錢」＋「哪些人一起分攤」，系統會自動算出最後誰要給誰多少。</p></div><div class="expense-cloud-badge">🗃️ 本機記帳</div></div>
         <div class="people-editor" data-people-editor></div>
-        <div class="expense-form">
-          <div class="field"><label>花費項目</label><input type="text" data-field="item" placeholder="例如：晚餐、車資、藥妝"></div>
-          <div class="field"><label>金額（日圓）</label><input type="number" data-field="amount" min="0" step="1" placeholder="0"></div>
-          <div class="field"><label>誰先付款</label><select data-field="payer"></select></div>
-          <div class="expense-actions"><button class="primary-btn" type="button" data-add-expense>＋ 新增</button></div>
-          <div class="participant-picker"><div class="participant-picker-title">哪些人要分攤這筆？（預設全員）</div><div class="participant-list" data-participants></div></div>
-        </div>
-        <div class="expense-list" data-expense-list></div>
-        <div class="summary-grid">
-          <div class="expense-summary"><h4>今日結算</h4><div data-balance></div></div>
-          <div class="settlement-box"><h4>建議怎麼還</h4><div class="settlement-list" data-settlement></div></div>
-        </div>
-        <div class="expense-footer">算法：每筆花費會平均分給勾選的人；「已付」減掉「應付」就是最後應收／應還。金額以日圓整數計算，若除不盡會自動四捨五入，最終以總額校正。</div>
+        <div class="expense-form"><div class="field"><label>花費項目</label><input type="text" data-field="item" placeholder="例如：晚餐、車資、藥妝"></div><div class="field"><label>金額（日圓）</label><input type="number" data-field="amount" min="0" step="1" placeholder="0"></div><div class="field"><label>誰先付款</label><select data-field="payer"></select></div><div class="expense-actions"><button class="primary-btn" type="button" data-add-expense>＋ 新增</button></div><div class="participant-picker"><div class="participant-picker-title">哪些人要分攤這筆？（預設全員）</div><div class="participant-list" data-participants></div></div></div>
+        <div class="expense-list" data-expense-list></div><div class="summary-grid"><div class="expense-summary"><h4>今日結算</h4><div data-balance></div></div><div class="settlement-box"><h4>建議怎麼還</h4><div class="settlement-list" data-settlement></div></div></div><div class="expense-footer">算法：每筆花費會平均分給勾選的人；「已付」減掉「應付」就是最後應收／應還。金額以日圓整數計算，若除不盡會自動四捨五入，最終以總額校正。</div>
       </div>`;
     }
 
     function renderPeopleEditor(root, dayIndex){
       const editor=root.querySelector('[data-people-editor]');
+      if(cloudTripId){
+        editor.innerHTML=people.map(name=>`<div class="person-chip readonly"><span>👤</span><span>${escapeHtml(name)}</span></div>`).join('');
+        return;
+      }
       editor.innerHTML=people.map((name,i)=>`<div class="person-chip"><span>👤</span><input aria-label="成員${i+1}名稱" value="${escapeHtml(name)}" data-person-index="${i}"><button type="button" title="刪除成員" data-remove-person="${i}">×</button></div>`).join('') + (people.length<8?`<button class="ghost-btn" type="button" data-add-person>＋ 成員</button>`:'');
-      editor.querySelectorAll('input[data-person-index]').forEach(input=>input.addEventListener('change',e=>{
-        const i=Number(e.target.dataset.personIndex); const v=e.target.value.trim()||`成員${i+1}`; people[i]=v; savePeople(); refreshAllExpenseUI();
-      }));
-      editor.querySelectorAll('[data-remove-person]').forEach(btn=>btn.addEventListener('click',()=>{
-        if(people.length<=2){alert('至少保留 2 位成員。');return;}
-        const i=Number(btn.dataset.removePerson); const removed=people[i];
-        const hasExpense=days.some((_,di)=>loadExpenses(di).some(e=>e.payer===removed||e.participants?.includes(removed)));
-        if(hasExpense){ alert(`「${removed}」已經出現在記帳資料中，請先把相關帳目刪除或改成其他成員，再刪除這位成員。`); return; }
-        people.splice(i,1); savePeople(); refreshAllExpenseUI();
-      }));
-      const add=editor.querySelector('[data-add-person]'); if(add) add.addEventListener('click',()=>{
-        const next=String.fromCharCode(65+people.length); people.push(next); savePeople(); refreshAllExpenseUI();
-      });
+      editor.querySelectorAll('input[data-person-index]').forEach(input=>input.addEventListener('change',e=>{const i=Number(e.target.dataset.personIndex);const v=e.target.value.trim()||`成員${i+1}`;people[i]=v;savePeople();refreshAllExpenseUI();}));
+      editor.querySelectorAll('[data-remove-person]').forEach(btn=>btn.addEventListener('click',()=>{if(people.length<=2){alert('至少保留 2 位成員。');return;}const i=Number(btn.dataset.removePerson);const removed=people[i];const hasExpense=days.some((_,di)=>loadExpenses(di).some(e=>e.payer===removed||e.participants?.includes(removed)));if(hasExpense){alert(`「${removed}」已經出現在記帳資料中，請先把相關帳目刪除或改成其他成員，再刪除這位成員。`);return;}people.splice(i,1);savePeople();refreshAllExpenseUI();}));
+      const add=editor.querySelector('[data-add-person]');if(add) add.addEventListener('click',()=>{const next=String.fromCharCode(65+people.length);people.push(next);savePeople();refreshAllExpenseUI();});
     }
 
-    function escapeHtml(v){return String(v).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));}
-
+    function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
     function ensureParticipants(root){
       const wrap=root.querySelector('[data-participants]');
       const old=[...wrap.querySelectorAll('input:checked')].map(x=>x.value);
-      const keepAll = old.length===0 || !old.some(v=>people.includes(v));
+      const keepAll=old.length===0||!old.some(v=>people.includes(v));
       wrap.innerHTML=people.map(p=>`<label class="participant-option"><input type="checkbox" value="${escapeHtml(p)}" ${keepAll||old.includes(p)?'checked':''}>${escapeHtml(p)}</label>`).join('');
     }
 
     function renderExpenseRows(root,dayIndex){
-      const list=root.querySelector('[data-expense-list]'); const expenses=loadExpenses(dayIndex);
+      const list=root.querySelector('[data-expense-list]');const expenses=loadExpenses(dayIndex);
       if(!expenses.length){list.innerHTML='<div class="expense-empty">今天還沒有記帳，先新增第一筆吧 ✍️</div>';return;}
-      list.innerHTML=expenses.map((e,idx)=>`<div class="expense-row">
-        <div><div class="name">${escapeHtml(e.item||'未命名')}</div><div class="meta">${escapeHtml(e.participants.join('、'))} 分攤</div></div>
-        <div class="payer">由 <b>${escapeHtml(e.payer)}</b> 先付</div>
-        <div class="shared">${e.participants.length} 人</div>
-        <div class="amount">${money(e.amount)}</div>
-        <div class="row-actions"><button class="danger-btn" type="button" data-delete-expense="${idx}">刪除</button></div>
-      </div>`).join('');
-      list.querySelectorAll('[data-delete-expense]').forEach(btn=>btn.addEventListener('click',()=>{
-        const arr=loadExpenses(dayIndex); arr.splice(Number(btn.dataset.deleteExpense),1); saveExpenses(dayIndex,arr); renderExpenseDay(dayIndex);
+      list.innerHTML=expenses.map((e,idx)=>`<div class="expense-row"><div><div class="name">${escapeHtml(e.item||'未命名')}</div><div class="meta">${escapeHtml(e.participants.join('、'))} 分攤</div></div><div class="payer">由 <b>${escapeHtml(e.payer)}</b> 先付</div><div class="shared">${e.participants.length} 人</div><div class="amount">${money(e.amount)}</div><div class="row-actions"><button class="danger-btn" type="button" data-delete-expense="${idx}" ${cloudTripId?'data-expense-id="'+escapeHtml(e.id||'')+'"':''}>刪除</button></div></div>`).join('');
+      list.querySelectorAll('[data-delete-expense]').forEach(btn=>btn.addEventListener('click',async()=>{
+        if(cloudTripId){
+          if(!btn.dataset.expenseId){alert('找不到這筆雲端帳目的 ID。');return;}
+          if(!confirm('確定刪除這筆共同記帳嗎？'))return;
+          try{const {error}=await sbClient.from('trip_expenses').delete().eq('id',btn.dataset.expenseId).eq('trip_id',cloudTripId);if(error)throw error;await loadCloudExpenses();refreshAllExpenseUI();}catch(err){alert(`刪除失敗：${err.message||err}`)}
+        }else{
+          const arr=localLoadExpenses(dayIndex);arr.splice(Number(btn.dataset.deleteExpense),1);saveLocalExpenses(dayIndex,arr);renderExpenseDay(dayIndex);renderOverall();
+        }
       }));
     }
 
     function calcBalances(dayIndex){
-      const expenses=loadExpenses(dayIndex); const paid=Object.fromEntries(people.map(p=>[p,0])); const owed=Object.fromEntries(people.map(p=>[p,0]));
-      expenses.forEach(e=>{ const amount=Number(e.amount)||0; if(paid[e.payer]==null) paid[e.payer]=0; paid[e.payer]+=amount; const ps=(e.participants||[]).filter(p=>owed[p]!=null); if(!ps.length)return; const cents=Math.round(amount*100); const base=Math.floor(cents/ps.length); let rem=cents-base*ps.length; ps.forEach((p,i)=>{owed[p]+= (base+(i<rem?1:0))/100;}); });
-      const balances=Object.fromEntries(people.map(p=>[p,(paid[p]||0)-(owed[p]||0)]));
-      return {paid,owed,balances};
+      const expenses=loadExpenses(dayIndex);const paid=Object.fromEntries(people.map(p=>[p,0]));const owed=Object.fromEntries(people.map(p=>[p,0]));
+      expenses.forEach(e=>{const amount=Number(e.amount)||0;if(paid[e.payer]==null)paid[e.payer]=0;paid[e.payer]+=amount;const ps=(e.participants||[]).filter(p=>owed[p]!=null);if(!ps.length)return;const cents=Math.round(amount*100);const base=Math.floor(cents/ps.length);let rem=cents-base*ps.length;ps.forEach((p,i)=>{owed[p]+=(base+(i<rem?1:0))/100;});});
+      const balances=Object.fromEntries(people.map(p=>[p,(paid[p]||0)-(owed[p]||0)]));return {paid,owed,balances};
     }
 
     function renderSummary(root,dayIndex){
-      const {paid,owed,balances}=calcBalances(dayIndex); const balanceBox=root.querySelector('[data-balance]');
-      balanceBox.innerHTML=people.map(p=>{const b=balances[p]||0; const cls=b>0.5?'positive':b<-0.5?'negative':'zero'; const label=b>0.5?'應收':b<-0.5?'應付':'已結清'; return `<div class="balance-row"><div class="b-name">${escapeHtml(p)} <span class="sub">${label}</span></div><div class="num">付 ${money(paid[p]||0)}</div><div class="num ${cls}">${b>0?'+':''}${money(b)}</div></div>`}).join('');
-      const list=root.querySelector('[data-settlement]'); const debtors=people.map(p=>[p,Math.max(0,-balances[p])]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]); const creditors=people.map(p=>[p,Math.max(0,balances[p])]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]); const tx=[]; let i=0,j=0;
-      while(i<debtors.length&&j<creditors.length){const amt=Math.min(debtors[i][1],creditors[j][1]); if(amt>0.005) tx.push(`<div class="settlement-item"><span><b>${escapeHtml(debtors[i][0])}</b> → <b>${escapeHtml(creditors[j][0])}</b></span><b>${money(amt)}</b></div>`); debtors[i][1]-=amt; creditors[j][1]-=amt; if(debtors[i][1]<=0.005)i++; if(creditors[j][1]<=0.005)j++;}
-      list.innerHTML=tx.length?tx.join(''):'<div class="settlement-empty">今天不用互相還錢，剛好打平 ✨</div>';
+      const {paid,owed,balances}=calcBalances(dayIndex);const balanceBox=root.querySelector('[data-balance]');
+      balanceBox.innerHTML=people.map(p=>{const b=balances[p]||0;const cls=b>0.5?'positive':b<-0.5?'negative':'zero';const label=b>0.5?'應收':b<-0.5?'應付':'已結清';return `<div class="balance-row"><div class="b-name">${escapeHtml(p)} <span class="sub">${label}</span></div><div class="num">付 ${money(paid[p]||0)}</div><div class="num ${cls}">${b>0?'+':''}${money(b)}</div></div>`}).join('');
+      const list=root.querySelector('[data-settlement]');const debtors=people.map(p=>[p,Math.max(0,-balances[p])]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]);const creditors=people.map(p=>[p,Math.max(0,balances[p])]).filter(x=>x[1]>0.005).sort((a,b)=>b[1]-a[1]);const tx=[];let i=0,j=0;while(i<debtors.length&&j<creditors.length){const amt=Math.min(debtors[i][1],creditors[j][1]);if(amt>0.005)tx.push(`<div class="settlement-item"><span><b>${escapeHtml(debtors[i][0])}</b> → <b>${escapeHtml(creditors[j][0])}</b></span><b>${money(amt)}</b></div>`);debtors[i][1]-=amt;creditors[j][1]-=amt;if(debtors[i][1]<=0.005)i++;if(creditors[j][1]<=0.005)j++;}list.innerHTML=tx.length?tx.join(''):'<div class="settlement-empty">今天不用互相還錢，剛好打平 ✨</div>';
+    }
+
+    async function addCloudExpense(dayIndex,payload){
+      const {error}=await sbClient.from('trip_expenses').insert({trip_id:cloudTripId,day_index:dayIndex,item:payload.item,amount:payload.amount,payer:payload.payer,participants:payload.participants});
+      if(error)throw error;
+      await loadCloudExpenses();
     }
 
     function renderExpenseDay(dayIndex){
-      const root=document.querySelector(`[data-expense-day="${dayIndex}"]`); if(!root)return;
-      renderPeopleEditor(root,dayIndex); ensureParticipants(root);
-      const payer=root.querySelector('[data-field="payer"]'); const current=payer.value; payer.innerHTML=people.map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join(''); if(people.includes(current)) payer.value=current;
-      renderExpenseRows(root,dayIndex); renderSummary(root,dayIndex);
-      const add=root.querySelector('[data-add-expense]'); add.onclick=()=>{
-        const item=root.querySelector('[data-field="item"]').value.trim(); const amount=Math.round(Number(root.querySelector('[data-field="amount"]').value)||0); const p=root.querySelector('[data-field="payer"]').value; const participants=[...root.querySelectorAll('[data-participants] input:checked')].map(x=>x.value);
-        if(!item){alert('請先填寫花費項目。');return;} if(!amount||amount<0){alert('請輸入正確的金額。');return;} if(!p){alert('請選擇付款人。');return;} if(!participants.length){alert('至少選 1 位分攤者。');return;}
-        const arr=loadExpenses(dayIndex); arr.push({item,amount,payer:p,participants,createdAt:Date.now()}); saveExpenses(dayIndex,arr); root.querySelector('[data-field="item"]').value=''; root.querySelector('[data-field="amount"]').value=''; renderExpenseDay(dayIndex);
+      const root=document.querySelector(`[data-expense-day="${dayIndex}"]`);if(!root)return;
+      renderPeopleEditor(root,dayIndex);ensureParticipants(root);
+      const payer=root.querySelector('[data-field="payer"]');const current=payer.value;payer.innerHTML=people.map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');if(people.includes(current))payer.value=current;
+      renderExpenseRows(root,dayIndex);renderSummary(root,dayIndex);updateCloudUI();
+      const add=root.querySelector('[data-add-expense]');add.onclick=async()=>{
+        const item=root.querySelector('[data-field="item"]').value.trim();const amount=Math.round(Number(root.querySelector('[data-field="amount"]').value)||0);const p=root.querySelector('[data-field="payer"]').value;const participants=[...root.querySelectorAll('[data-participants] input:checked')].map(x=>x.value);
+        if(!item){alert('請先填寫花費項目。');return;}if(!amount||amount<0){alert('請輸入正確的金額。');return;}if(!p){alert('請選擇付款人。');return;}if(!participants.length){alert('至少選 1 位分攤者。');return;}
+        try{
+          add.disabled=true;
+          if(cloudTripId){await addCloudExpense(dayIndex,{item,amount,payer:p,participants});}
+          else{const arr=localLoadExpenses(dayIndex);arr.push({item,amount,payer:p,participants,createdAt:Date.now()});saveLocalExpenses(dayIndex,arr);}
+          root.querySelector('[data-field="item"]').value='';root.querySelector('[data-field="amount"]').value='';refreshAllExpenseUI();
+        }catch(err){alert(`新增記帳失敗：${err.message||err}`)}finally{add.disabled=false;}
       };
     }
 
     function renderOverall(){
-      const panel=document.getElementById('overall-panel');
-      if(!panel)return;
-      const {paid,owed,balances,dayTotals}=calcCombinedBalances();
-      const total=dayTotals.reduce((sum,d)=>sum+d.total,0);
-      const count=dayTotals.reduce((sum,d)=>sum+d.count,0);
-      panel.querySelector('[data-overall-total]').textContent=money(total);
-      panel.querySelector('[data-overall-count]').textContent=count;
-      panel.querySelector('[data-overall-average]').textContent=money(people.length?total/people.length:0);
-      panel.querySelector('[data-overall-people]').textContent=`${people.length} 人`;
-
-      panel.querySelector('[data-overall-people-grid]').innerHTML=people.map(p=>{
-        const b=balances[p]||0;
-        const cls=b>0.5?'positive':b<-0.5?'negative':'zero';
-        const label=b>0.5?'應收':b<-0.5?'應付':'已結清';
-        return `<div class="overall-person"><div class="overall-person-head"><b>${escapeHtml(p)}</b><span class="${cls}">${label} ${b>0?'+':''}${money(b)}</span></div><div class="overall-mini-grid"><div class="overall-mini"><span>總共已付</span><b>${money(paid[p]||0)}</b></div><div class="overall-mini"><span>總共應付</span><b>${money(owed[p]||0)}</b></div></div></div>`;
-      }).join('');
-
-      const tx=buildSettlementRows(balances);
-      const settlement=panel.querySelector('[data-overall-settlement]');
-      settlement.innerHTML=tx.length?tx.map(t=>`<div class="settlement-item"><span><b>${escapeHtml(t.from)}</b> → <b>${escapeHtml(t.to)}</b></span><b>${money(t.amount)}</b></div>`).join(''):'<div class="settlement-empty">目前沒有需要互相還錢的帳目，整趟剛好打平 ✨</div>';
-
-      const daily=panel.querySelector('[data-overall-daily]');
-      daily.innerHTML=`<table class="daily-total-table"><thead><tr><th>日期</th><th>筆數</th><th>總花費</th></tr></thead><tbody>${dayTotals.map(d=>`<tr><td>${escapeHtml(d.label)}</td><td>${d.count}</td><td class="sum">${money(d.total)}</td></tr>`).join('')}</tbody></table>`;
-
-      const copyBtn=panel.querySelector('[data-copy-settlement]');
-      copyBtn.onclick=async()=>{
-        const text=tx.length?['東京 6 天旅行｜最終結算',...tx.map(t=>`${t.from} → ${t.to} ${money(t.amount)}`)].join('\n'):'東京 6 天旅行｜目前沒有需要互相還錢的帳目。';
-        try{await navigator.clipboard.writeText(text);alert('已複製六天總結算！');}
-        catch{alert(text);}
-      };
-      const clearBtn=panel.querySelector('[data-clear-all-expenses]');
-      clearBtn.onclick=()=>{
-        if(!confirm('確定要清除 10/14～10/19 的全部記帳嗎？這個動作會刪除六天的帳目，但不會影響行程。')) return;
-        days.forEach((_,i)=>localStorage.removeItem(expenseKey(i)));
-        refreshAllExpenseUI();
+      const panel=document.getElementById('overall-panel');if(!panel)return;
+      const {paid,owed,balances,dayTotals}=calcCombinedBalances();const total=dayTotals.reduce((sum,d)=>sum+d.total,0);const count=dayTotals.reduce((sum,d)=>sum+d.count,0);
+      panel.querySelector('[data-overall-total]').textContent=money(total);panel.querySelector('[data-overall-count]').textContent=count;panel.querySelector('[data-overall-average]').textContent=money(people.length?total/people.length:0);panel.querySelector('[data-overall-people]').textContent=`${people.length} 人`;
+      panel.querySelector('[data-overall-people-grid]').innerHTML=people.map(p=>{const b=balances[p]||0;const cls=b>0.5?'positive':b<-0.5?'negative':'zero';const label=b>0.5?'應收':b<-0.5?'應付':'已結清';return `<div class="overall-person"><div class="overall-person-head"><b>${escapeHtml(p)}</b><span class="${cls}">${label} ${b>0?'+':''}${money(b)}</span></div><div class="overall-mini-grid"><div class="overall-mini"><span>總共已付</span><b>${money(paid[p]||0)}</b></div><div class="overall-mini"><span>總共應付</span><b>${money(owed[p]||0)}</b></div></div></div>`}).join('');
+      const tx=buildSettlementRows(balances);const settlement=panel.querySelector('[data-overall-settlement]');settlement.innerHTML=tx.length?tx.map(t=>`<div class="settlement-item"><span><b>${escapeHtml(t.from)}</b> → <b>${escapeHtml(t.to)}</b></span><b>${money(t.amount)}</b></div>`).join(''):'<div class="settlement-empty">目前沒有需要互相還錢的帳目，整趟剛好打平 ✨</div>';
+      panel.querySelector('[data-overall-daily]').innerHTML=`<table class="daily-total-table"><thead><tr><th>日期</th><th>筆數</th><th>總花費</th></tr></thead><tbody>${dayTotals.map(d=>`<tr><td>${escapeHtml(d.label)}</td><td>${d.count}</td><td class="sum">${money(d.total)}</td></tr>`).join('')}</tbody></table>`;
+      const copyBtn=panel.querySelector('[data-copy-settlement]');copyBtn.onclick=async()=>{const text=tx.length?['東京 6 天旅行｜最終結算',...tx.map(t=>`${t.from} → ${t.to} ${money(t.amount)}`)].join('\n'):'東京 6 天旅行｜目前沒有需要互相還錢的帳目。';try{await navigator.clipboard.writeText(text);alert('已複製六天總結算！')}catch{alert(text)}};
+      const clearBtn=panel.querySelector('[data-clear-all-expenses]');clearBtn.onclick=async()=>{
+        if(!confirm('確定要清除 10/14～10/19 的全部記帳嗎？這個動作會刪除六天的帳目，但不會影響行程。'))return;
+        try{
+          if(cloudTripId){const {error}=await sbClient.from('trip_expenses').delete().eq('trip_id',cloudTripId);if(error)throw error;await loadCloudExpenses();}
+          else{days.forEach((_,i)=>localStorage.removeItem(expenseKey(i)));}
+          refreshAllExpenseUI();
+        }catch(err){alert(`清除失敗：${err.message||err}`)}
       };
     }
 
-    function refreshAllExpenseUI(){days.forEach((_,i)=>renderExpenseDay(i)); renderOverall();}
+    function refreshAllExpenseUI(){days.forEach((_,i)=>renderExpenseDay(i));renderOverall();updateCloudUI();}
 
     const overallButton=document.createElement('button');
     overallButton.className='day-btn';
     overallButton.textContent='💰 六天總帳';
     dayNav.appendChild(overallButton);
     panels.insertAdjacentHTML('beforeend', overallLedgerTemplate());
+    bindCloudUI();
     overallButton.addEventListener('click',showOverall);
 
     days.forEach((d,i)=>{
@@ -909,7 +1042,16 @@
 
 
     // Build each day's independent expense ledger and restore saved data.
-    setTimeout(()=>{refreshAllExpenseUI(); renderDpa();},0);
+    setTimeout(async()=>{
+      try{
+        if(isSupabaseConfigured && sbClient){
+          await ensureAnonymousAuth();
+          const sess=getCloudSession();
+          if(sess?.tripId){cloudTripId=sess.tripId;cloudInviteCode=sess.inviteCode||'';cloudDisplayName=sess.displayName||'';await activateCloudSession();}
+        }
+      }catch(err){console.error('Supabase init failed',err);alert(`Supabase 連線初始化失敗：${err.message||err}\n\n先使用本機記帳也可以，設定好資料庫後再重新整理。`);}
+      refreshAllExpenseUI(); renderDpa(); updateCloudUI();
+    },0);
 
     function setActiveNav(index){
       [...dayNav.children].forEach((b,j)=>b.classList.toggle('active',j===index));

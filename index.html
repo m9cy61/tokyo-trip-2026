@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5efe4" />
-  <title>東京 6天5夜｜2026.10.14–10.19</title>
+  <title>出國是免稅不是免費 東京 6天5夜｜2026.10.14–10.19</title>
   <style>
     :root{
       --paper:#f5efe4; --paper2:#fbf8f1; --card:#fffdf8; --ink:#28251f; --muted:#7a756d;
@@ -111,6 +111,16 @@
     .expense-footer{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.55}
     .overall-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef1eb;border:1px solid #d6dfd7;color:#4f5d53;font-size:11px}
 
+
+    /* DPA picker */
+    .dpa-list{display:grid;gap:7px}
+    .dpa-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:#fffefa;font-size:12px;cursor:pointer}
+    .dpa-item input{accent-color:var(--red);margin:0}
+    .dpa-item span{min-width:0;overflow-wrap:anywhere}
+    .dpa-item b{white-space:nowrap;font-size:11px}
+    .dpa-total{margin-top:10px;padding:9px 10px;border-radius:12px;background:#faf7f0;border:1px solid var(--line);font-size:12px}
+    .dpa-section-label{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:900;padding:7px 2px 2px}
+    .dpa-note-inline{display:inline-block;margin-left:6px;font-size:10px;color:var(--muted);font-weight:700}
 
     /* overall trip ledger */
     .overall-panel .card{margin-bottom:18px}
@@ -311,6 +321,42 @@
       .day-btn:hover{transform:none}
       .map-link:hover{border-color:var(--line);background:#fff}
     }
+
+
+    /* Desktop / laptop overflow hardening */
+    .grid, .grid > *, .route, .stop, .stop-body, .side-stack, .side-card,
+    .map-card, .expense-card, .expense-form, .expense-row, .summary-grid,
+    .overall-hero, .overall-person-grid, .overall-person { min-width:0; }
+    .grid > *, .side-stack > *, .card, .side-card, .map-card, .expense-card { width:100%; max-width:100%; }
+    .stop { grid-template-columns:90px minmax(0,1fr); }
+    .stop-body { overflow:hidden; }
+    .stop-title, .stop-note, .tag, .shop, .notice, .mini-table,
+    .expense-summary, .settlement-box, .overall-person, .overall-settlement-note { min-width:0; max-width:100%; }
+    .route-strip { width:100%; min-width:0; max-width:100%; }
+    .route-node { flex:0 0 112px; min-width:112px; max-width:160px; }
+    .map-head, .map-foot { min-width:0; max-width:100%; }
+    .map-head > *, .map-foot > * { min-width:0; }
+    .map-foot { overflow-x:auto; }
+
+    /* On narrower laptop windows, stack the right column instead of letting it squeeze. */
+    @media (max-width:1199px) and (min-width:681px){
+      .wrap{padding-left:18px;padding-right:18px}
+      .grid{grid-template-columns:minmax(0,1fr);gap:18px}
+      .side-stack{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+      .map-card{order:-1}
+      .hero{flex-direction:column;align-items:stretch;gap:18px}
+      .hero-copy{max-width:none}
+      .hero-card{width:100%;min-width:0;max-width:none}
+      .expense-form{grid-template-columns:minmax(0,1.2fr) minmax(120px,.8fr)}
+      .expense-form .field:nth-child(3){grid-column:1/-1}
+      .expense-actions{grid-column:1/-1;justify-content:flex-start}
+    }
+
+    @media (min-width:1200px){
+      .wrap{max-width:1240px}
+      .grid{grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:22px}
+    }
+
   </style>
 </head>
 <body>
@@ -385,6 +431,22 @@
             <label class="check"><input type="checkbox" data-key="10-15-c">以 21:00 前完成取件為目標</label>
           </div></div>
           <div class="card side-card"><h3>今晚住宿</h3><p><b>Hiyori Hotel Maihama</b></p><p class="sub">10/16 退房後前往神田。</p></div>
+          <div class="card side-card"><h3>🎟️ Disney Premier Access</h3>
+            <div class="dpa-list">
+              <div class="dpa-section-label">🎢 遊樂設施</div>
+              <label class="dpa-item"><input type="checkbox" data-dpa="anna"><span>❄️ 安娜與艾莎的冰雪之旅</span><b>¥2,500</b></label>
+              <label class="dpa-item"><input type="checkbox" data-dpa="rapunzel"><span>✨ 魔法奇緣</span><b>¥2,000</b></label>
+              <label class="dpa-item"><input type="checkbox" data-dpa="peter"><span>🏴‍☠️ 小飛俠夢幻島歷險記</span><b>¥2,000</b></label>
+              <label class="dpa-item"><input type="checkbox" data-dpa="soaring"><span>✈️ 翱翔：夢幻奇航</span><b>¥2,500</b></label>
+              <label class="dpa-item"><input type="checkbox" data-dpa="toystory"><span>🧸 玩具總動員瘋狂遊戲屋</span><b>¥2,000</b></label>
+              <label class="dpa-item"><input type="checkbox" data-dpa="journey"><span>🌋 地心探險之旅</span><b>¥2,000</b></label>
+              <label class="dpa-item"><input type="checkbox" data-dpa="raging"><span>⚡ 忿怒雙神</span><b>¥1,500</b></label>
+              <div class="dpa-section-label">🎆 遊行／表演</div>
+              <label class="dpa-item"><input type="checkbox" data-dpa="believe"><span>🌊 Believe!～Sea of Dreams～<small class="dpa-note-inline">10/15 19:30</small></span><b>¥2,500</b></label>
+            </div>
+            <div class="dpa-total">已勾選：<b data-dpa-total>¥0</b>／4人預估：<b data-dpa-total-4>¥0</b></div>
+            <div class="map-note">10/15 官方日程中，Believe!～Sea of Dreams～為 Disney Premier Access 對象，場次 19:30；其餘演出是否提供 DPA 以東京迪士尼度假區官方 App 當日顯示為準。</div>
+          </div>
           <div class="card side-card"><h3>小提醒</h3><div class="notice soft">行程已經很滿，10/15 不再安排市區購物，專心玩 DisneySea。</div></div>`
       },
       {
@@ -461,22 +523,29 @@
           <div class="card side-card"><h3>晚餐</h3><p class="sub">四人約 22:30 在神田集合；晚餐／宵夜以營業到晚間較穩定的店為主，當天再決定。</p></div>`
       },
       {
-        label:'10/19 回台', title:'東京車站／MAPPA → 成田', color:'返程日',
+        label:'10/19 回台', title:'兩隊分流：MAPPA／東京車站 → 成田', color:'返程日',
         route:[
-          ['08:30–09:30','退房前整理','神田飯店','🧳 檢查戰利品、護照與行李'],
-          ['09:00–09:45','東京車站','補買伴手禮','🎁 10/17 若已買大部分，今天只需補貨'],
-          ['10:00–11:30','MAPPA 活動','有樂町方向','🎬 依實際票券／開放時間為準'],
-          ['11:30–12:30','午餐＋回神田','取行李','🍱 不排距離太遠的餐廳'],
-          ['12:30–13:20','神田 → 日暮里／成田','前往成田機場','🚆 以提早抵達機場為目標'],
+          ['08:30–09:00','四人一起退房','神田飯店 → 寄放／保管大行李','🧳 先確認護照、行李、戰利品，避免之後再找東西'],
+          ['09:00–09:15','兩隊分流','小王＋小施 → 有樂町；小郭＋小羅 → 東京車站','👥 MAPPA 與伴手禮分開進行，不互相綁行程'],
+          ['09:40–10:00','小王＋小施｜MAPPA','有樂町／會場附近集合','🎬 目標 10:00 場，建議提早到場'],
+          ['09:15–11:15','小郭＋小羅｜東京車站','Gransta／Tokyo Character Street 等','🎁 先完成最後一輪伴手禮；不必等 MAPPA'],
+          ['10:00–11:20','小王＋小施｜MAPPA EXPO','展覽＋周邊','🎬 看展為主，11:20–11:30 左右離場'],
+          ['11:30–11:45','四人重新集合','回神田飯店取行李','🤝 兩隊會合後一起出發，開始進機場模式'],
+          ['11:45–12:20','神田 → 日暮里','JR 前往日暮里','🚆 目標 12:20 左右到日暮里'],
+          ['12:20–13:00','日暮里 → 成田','Skyliner → 成田機場','✈️ 目標 13:00 前後抵達機場'],
+          ['13:00–15:00','成田機場','報到、托運、安檢、候機','🧳 15:30 起飛，預留約 2.5 小時'],
           ['15:30','成田起飛','Narita → Taichung','✈️ 15:30–18:10']
         ],
-        places:[['Tokyo Station',35.6812,139.7671,'東京站'],['Yurakucho',35.6749,139.7626,'有樂町'],['Kanda',35.6917,139.7709,'神田'],['Narita Airport',35.7719,140.3929,'成田機場']],
-        embed:'東京車站', zoom:13,
-        links:[['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['有樂町','https://www.google.com/maps/search/?api=1&query=Yurakucho+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
+        places:[['Tokyo Station',35.6812,139.7671,'東京站'],['Yurakucho',35.6749,139.7626,'有樂町'],['Kanda',35.6917,139.7709,'神田'],['Nippori Station',35.7278,139.7709,'日暮里站'],['Narita Airport',35.7719,140.3929,'成田機場']],
+        embed:'東京站 有樂町 神田 日暮里 成田', zoom:12,
+        links:[['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['有樂町／MAPPA方向','https://www.google.com/maps/search/?api=1&query=Yurakucho+Tokyo'],['神田站','https://www.google.com/maps/search/?api=1&query=Kanda+Station+Tokyo'],['日暮里站','https://www.google.com/maps/search/?api=1&query=Nippori+Station+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
         side:`
-          <div class="card side-card"><h3>返程優先順序</h3><div class="stats"><div class="stat"><b>15:30</b><span>成田起飛</span></div><div class="stat"><b>13:20</b><span>目標離開神田</span></div><div class="stat"><b>10/17</b><span>先買伴手禮</span></div><div class="stat"><b>10/19</b><span>只做補貨</span></div></div></div>
-          <div class="card side-card"><h3>注意</h3><div class="notice">MAPPA 展覽日期、入場時間與票券安排務必在出發前再次核對。返程日不建議臨時增加大型購物。</div></div>
-          <div class="card side-card"><h3>航班</h3><table class="mini-table"><tr><td>成田 → 台中</td><td>15:30–18:10</td></tr></table></div>`
+          <div class="card side-card"><h3>👥 10/19 兩隊分流</h3><div class="route-strip"><div class="route-node"><b>小王＋小施</b>MAPPA EXPO<br>目標 10:00 場</div><span class="route-arrow">↔</span><div class="route-node"><b>小郭＋小羅</b>東京車站<br>伴手禮</div><span class="route-arrow">→</span><div class="route-node"><b>11:30–11:45</b>神田會合<br>一起取行李</div></div></div>
+          <div class="card side-card"><h3>返程優先順序</h3><div class="stats"><div class="stat"><b>10:00</b><span>MAPPA 目標場次</span></div><div class="stat"><b>11:30</b><span>神田重新集合</span></div><div class="stat"><b>13:00</b><span>目標抵達成田</span></div><div class="stat"><b>15:30</b><span>成田起飛</span></div></div></div>
+          <div class="card side-card"><h3>📋 分流提醒</h3><div class="notice">四人一起退房後，把大行李留在神田飯店保管。小王、小施輕裝去 MAPPA；小郭、小羅去東京車站。約 11:30–11:45 回神田集合，再一起前往成田。</div></div>
+          <div class="card side-card"><h3>🎬 MAPPA</h3><p class="sub">目標預約 10:00 場。若實際票券／入場狀況不同，以當天票券規則為準；11:20–11:30 左右離場比較適合後續機場節奏。</p></div>
+          <div class="card side-card"><h3>🎁 東京車站</h3><p class="sub">小郭＋小羅可優先逛 GRANSTA、Tokyo Character Street、伴手禮區；因 10/17 已安排先買一輪，10/19 以補買為主。</p></div>
+          <div class="card side-card"><h3>航班</h3><table class="mini-table"><tr><td>成田 → 台中</td><td>15:30–18:10</td></tr><tr><td>目標到機場</td><td>13:00</td></tr></table></div>`
       }
     ];
 
@@ -792,7 +861,7 @@
 
 
     // Build each day's independent expense ledger and restore saved data.
-    setTimeout(()=>refreshAllExpenseUI(),0);
+    setTimeout(()=>{refreshAllExpenseUI(); renderDpa();},0);
 
     function setActiveNav(index){
       [...dayNav.children].forEach((b,j)=>b.classList.toggle('active',j===index));
@@ -826,6 +895,23 @@
         input.checked=done; input.closest('.check').classList.toggle('done',done);
       });
     });
-  </script>
+      // DPA selection state for DisneySea 10/15.
+    const DPA_TOTAL_KEY = 'tokyo-dpa-v1';
+    const DPA_PRICES = { anna:2500, rapunzel:2000, peter:2000, soaring:2500, toystory:2000, journey:2000, raging:1500, believe:2500 };
+    function loadDpa(){
+      try{ const raw=localStorage.getItem(DPA_TOTAL_KEY); return raw?JSON.parse(raw):{}; }catch{return {}}
+    }
+    function renderDpa(){
+      const boxes=document.querySelectorAll('[data-dpa]'); if(!boxes.length)return;
+      const state=loadDpa(); let total=0;
+      boxes.forEach(b=>{ b.checked=!!state[b.dataset.dpa]; if(b.checked) total+=DPA_PRICES[b.dataset.dpa]||0; });
+      const one=document.querySelector('[data-dpa-total]'); const four=document.querySelector('[data-dpa-total-4]');
+      if(one) one.textContent=money(total); if(four) four.textContent=money(total*4);
+    }
+    document.addEventListener('change',e=>{
+      if(e.target.matches('[data-dpa]')){ const state=loadDpa(); state[e.target.dataset.dpa]=e.target.checked; localStorage.setItem(DPA_TOTAL_KEY,JSON.stringify(state)); renderDpa(); }
+    });
+
+</script>
 </body>
 </html>

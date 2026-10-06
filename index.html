@@ -660,7 +660,7 @@
     const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
     const CLOUD_SESSION_KEY='tokyo-cloud-session-v1';
     const SUPABASE_URL='https://jgcyhxaorkwubmdgjabc.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY='PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE';
+    const SUPABASE_PUBLISHABLE_KEY='sb_publishable_ZtuAIMtUjAFePvuxVgT5rQ_kRHXsq94';
     const TRIP_NAME='東京 2026｜10/14–10/19';
     const isSupabaseConfigured=SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
     const sbClient=isSupabaseConfigured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;

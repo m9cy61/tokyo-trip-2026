@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5efe4" />
   <title>東京 6天5夜｜2026.10.14–10.19</title>
+
   <style>
     :root{
       --paper:#f5efe4; --paper2:#fbf8f1; --card:#fffdf8; --ink:#28251f; --muted:#7a756d;
@@ -659,8 +660,8 @@
     const PEOPLE_KEY='tokyo-trip-people-v1';
     const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
     const CLOUD_SESSION_KEY='tokyo-cloud-session-v1';
-    const SUPABASE_URL='PASTE_YOUR_SUPABASE_URL_HERE';
-    const SUPABASE_PUBLISHABLE_KEY='PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE';
+    const SUPABASE_URL='https://jgcyhxaorkwubmdgjabc.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY='sb_publishable_ZtuAIMtUjAFePvuxVgT5rQ_kRHXsq94';
     const TRIP_NAME='東京 2026｜10/14–10/19';
     const isSupabaseConfigured=SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
     const sbClient=isSupabaseConfigured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;
@@ -759,7 +760,7 @@
     async function joinSharedTrip(displayName,inviteCode){
       if(!sbClient) throw new Error('Supabase 尚未設定。');
       if(!DEFAULT_PEOPLE.includes(displayName)) throw new Error('請從小王／小施／小郭／小羅中選擇。');
-      if(!inviteCode.trim()) throw new Error('請輸入 10 碼左右的邀請碼。');
+      if(!inviteCode.trim()) throw new Error('請輸入 24 位邀請碼。');
       const {data,error}=await sbClient.rpc('join_trip',{p_invite_code:inviteCode.trim().toUpperCase(),p_display_name:displayName});
       if(error) throw error;
       const row=Array.isArray(data)?data[0]:data;
@@ -885,7 +886,7 @@
           <div class="cloud-status" data-cloud-status></div>
           <div class="cloud-actions">
             <div class="field"><label>我是誰</label><select data-cloud-display-name>${DEFAULT_PEOPLE.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('')}</select></div>
-            <div class="field"><label>加入時輸入邀請碼</label><input data-cloud-invite-input type="text" inputmode="text" autocomplete="off" placeholder="例如：A1B2C3D4E5"></div>
+            <div class="field"><label>加入時輸入邀請碼</label><input data-cloud-invite-input type="text" inputmode="text" autocomplete="off" placeholder="貼上 24 位邀請碼"></div>
             <div class="cloud-btns"><button type="button" class="primary-btn" data-cloud-create>建立共同帳本</button><button type="button" class="ghost-btn" data-cloud-join>加入共同帳本</button><button type="button" class="ghost-btn" data-cloud-leave>退出本機帳本</button></div>
           </div>
           <div class="cloud-code" data-cloud-code style="display:none"></div>

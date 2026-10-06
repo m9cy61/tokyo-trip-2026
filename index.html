@@ -13,7 +13,7 @@
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth;overflow-x:hidden}
-    body{margin:0;color:var(--ink);background:
+    body{margin:0;max-width:100%;overflow-x:hidden;color:var(--ink);background:
       radial-gradient(circle at 15% 10%,rgba(157,75,67,.05),transparent 22%),
       radial-gradient(circle at 85% 28%,rgba(84,104,91,.06),transparent 24%),
       linear-gradient(180deg,#f8f2e7 0%,var(--paper) 48%,#f1eadf 100%);
@@ -150,23 +150,49 @@
       .overall-person-grid{grid-template-columns:minmax(0,1fr)}
       .daily-total-table{font-size:11px}
       .daily-total-table th,.daily-total-table td{padding:8px 4px}
-      .overall-action-row{justify-content:stretch}
-      .overall-action-row .ghost-btn{flex:1 1 180px}
+      .overall-action-row{justify-content:stretch;width:100%;}
+      .overall-action-row .ghost-btn{min-width:0;flex:1 1 180px}
+    }
+
+    /* Layout stability: prevent long labels, maps and grids from widening the page. */
+    .grid > *, .side-stack > *, .overall-hero > *, .overall-person-grid > *, .summary-grid > *,
+    .expense-form > *, .expense-row > * { min-width:0; }
+    .card, .map-card, .expense-card, .side-card, .overall-panel { min-width:0; }
+    .day-title h2, .overall-title, .stop-title, .stop-note, .day-title, .hero-card,
+    .side-card, .overall-person, .overall-settlement-note { overflow-wrap:anywhere; }
+    .gmaps-wrap, .gmaps-wrap iframe { max-width:100%; }
+    .map-head > *, .expense-head > *, .overall-hero > * { min-width:0; }
+    .expense-form, .expense-row, .summary-grid, .overall-hero, .grid { width:100%; }
+
+    @media (min-width: 981px){
+      .wrap{width:100%;max-width:1240px;padding-left:24px;padding-right:24px;}
+      main{padding-top:30px;}
+      .grid{grid-template-columns:minmax(0,1.5fr) minmax(320px,.8fr);gap:24px;align-items:start;}
+      .side-stack{grid-template-columns:minmax(0,1fr);}
+      .map-card{order:initial;}
+      .hero{align-items:flex-end;}
+      .hero-copy{min-width:0;}
+      .hero-card{flex:0 1 330px;max-width:360px;}
+      .gmaps-wrap{height:380px;}
+      .expense-form{grid-template-columns:minmax(220px,1.7fr) minmax(125px,.8fr) minmax(165px,.9fr) auto;}
+      .expense-actions{min-width:86px;}
+      .expense-row{grid-template-columns:minmax(0,1.8fr) 140px 82px minmax(130px,1fr) auto;}
+      .overall-hero{grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);}
     }
 
     /* Responsive refinements */
     @media (max-width: 980px){
       .wrap{padding-left:18px;padding-right:18px}
-      .grid{grid-template-columns:minmax(0,1fr);gap:18px}
+      .grid{grid-template-columns:minmax(0,1fr);gap:18px;min-width:0}
       .hero{flex-direction:column;align-items:stretch;gap:18px}
       .hero-copy{max-width:none}
       .hero-card{width:100%;min-width:0}
-      .side-stack{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+      .side-stack{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;min-width:0}
       .map-card{order:-1}
-      .expense-form{grid-template-columns:minmax(0,1.2fr) minmax(110px,.7fr);}
+      .expense-form{grid-template-columns:minmax(0,1.2fr) minmax(110px,.7fr);min-width:0}
       .expense-form .field:nth-child(3){grid-column:1/-1}
       .expense-actions{grid-column:1/-1;justify-content:flex-start}
-      .expense-row{grid-template-columns:minmax(0,1.4fr) 100px 90px minmax(120px,1fr) auto}
+      .expense-row{grid-template-columns:minmax(0,1.45fr) 100px 84px minmax(110px,1fr) auto;min-width:0}
     }
 
     @media (max-width: 680px){
@@ -228,7 +254,8 @@
       .map-note{font-size:11px;line-height:1.5}
       .mini-table{font-size:12px}
       .footer{font-size:10.5px;line-height:1.6;padding:0 4px}
-      .expense-form{grid-template-columns:minmax(0,1fr) minmax(110px,.65fr);gap:9px}
+      .expense-form{grid-template-columns:minmax(0,1fr) minmax(110px,.65fr);gap:9px;min-width:0}
+      .expense-form .field{min-width:0}
       .expense-form .field:nth-child(3){grid-column:1/-1}
       .expense-actions{grid-column:1/-1;justify-content:stretch}.expense-actions .primary-btn{width:100%}
       .participant-picker{grid-column:1/-1}
@@ -274,7 +301,7 @@
       .route-node{min-width:110px}
       .footer{font-size:10px}
       .expense-head h3{font-size:19px}.expense-head p{font-size:11px}
-      .expense-form{grid-template-columns:1fr 1fr}.expense-form .field:nth-child(2){grid-column:2}
+      .expense-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.expense-form .field:nth-child(2){grid-column:2}
       .person-chip input{width:58px}.person-chip{padding:5px 7px 5px 9px}
       .balance-row{grid-template-columns:minmax(0,1fr) 72px 72px;font-size:11px}.balance-row .num{font-size:10px}
       .settlement-item{font-size:11px}.settlement-item b{font-size:12px}
@@ -318,6 +345,7 @@
       {
         label:'10/14 抵達', title:'舞濱入住・IKSPIARI', color:'抵達日',
         route:[
+          ['07:00','台中機場集合','台中國際機場報到、托運、安檢','🛫 09:30 班機｜建議提前抵達'],
           ['09:30','台中出發','台中國際機場 → 成田機場','✈️ 09:30–14:00'],
           ['14:00–16:30','成田 → 舞濱','前往 Tokyo Disney Resort／Toy Story Hotel','🧳 抵達後以入住、寄放行李為優先'],
           ['17:30–19:00','IKSPIARI','舞濱站旁購物中心','🛍️ Disney Store、3COINS、DAISO 等'],
@@ -472,7 +500,7 @@
 
 
     const PEOPLE_KEY='tokyo-trip-people-v1';
-    const DEFAULT_PEOPLE=['A','B','C','D'];
+    const DEFAULT_PEOPLE=['小王','小施','小郭','小羅'];
     const loadPeople=()=>{
       try{
         const raw=localStorage.getItem(PEOPLE_KEY); const arr=raw?JSON.parse(raw):null;
@@ -486,6 +514,28 @@
       try{ const raw=localStorage.getItem(expenseKey(dayIndex)); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }
       catch{return []}
     };
+
+    // If this browser used the previous A/B/C/D defaults, migrate those names
+    // so existing saved expenses keep working with the new Chinese default names.
+    function migrateLegacyPeople(){
+      const legacy=['A','B','C','D'];
+      const isLegacy = Array.isArray(people) && people.length===4 && people.every((v,i)=>v===legacy[i]);
+      if(!isLegacy) return;
+      const map=Object.fromEntries(legacy.map((v,i)=>[v,DEFAULT_PEOPLE[i]]));
+      days.forEach((_,dayIndex)=>{
+        const arr=loadExpenses(dayIndex);
+        if(!arr.length) return;
+        const migrated=arr.map(e=>({
+          ...e,
+          payer:map[e.payer]||e.payer,
+          participants:(e.participants||[]).map(p=>map[p]||p)
+        }));
+        localStorage.setItem(expenseKey(dayIndex),JSON.stringify(migrated));
+      });
+      people=[...DEFAULT_PEOPLE];
+      savePeople();
+    }
+    migrateLegacyPeople();
     const saveExpenses=(dayIndex,arr)=>localStorage.setItem(expenseKey(dayIndex),JSON.stringify(arr));
     const money=n=>`¥${Math.round(Number(n)||0).toLocaleString('ja-JP')}`;
 

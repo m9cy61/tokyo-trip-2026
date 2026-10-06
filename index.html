@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5efe4" />
   <title>東京 6天5夜｜2026.10.14–10.19</title>
-  <link rel="preconnect" href="https://unpkg.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3uS0iQ3mHk6P9QvYH5mP2v7r7Q8U4=" crossorigin="" />
   <style>
     :root{
       --paper:#f5efe4; --paper2:#fbf8f1; --card:#fffdf8; --ink:#28251f; --muted:#7a756d;
@@ -54,9 +52,8 @@
 
     /* map */
     .map-card{padding:0;overflow:hidden}.map-head{padding:18px 20px 10px;display:flex;justify-content:space-between;gap:12px;align-items:flex-end}.map-head h3{margin:0;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:22px}.map-head small{color:var(--muted)}
-    #map{height:360px;width:100%;background:#e9e3d9}.leaflet-container{font-family:inherit}
+    .gmaps-wrap{position:relative;width:100%;height:360px;background:#e9e3d9}.gmaps-wrap iframe{width:100%;height:100%;border:0;display:block}.map-overlay{position:absolute;left:14px;bottom:14px;z-index:2;background:rgba(255,253,248,.94);border:1px solid rgba(127,109,88,.2);border-radius:999px;padding:7px 10px;font-size:11px;color:var(--muted);box-shadow:0 4px 12px rgba(52,42,28,.08);pointer-events:none}
     .map-foot{padding:12px 16px 16px;display:flex;gap:8px;flex-wrap:wrap}.map-link{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}.map-link:hover{border-color:#b8a894;background:#fbf8f1}
-    .leaflet-popup-content-wrapper{border-radius:14px}.pin{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
 
     .side-stack{display:grid;gap:18px;align-content:start}.side-card h3{margin:0 0 10px;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:21px}.side-card p{margin:6px 0}.notice{background:#faf0ea;border:1px solid #e7cbc1;color:#69423b;border-radius:16px;padding:13px 14px;font-size:14px}.soft{background:#eef1eb;border-color:#d6dfd7;color:#4f5d53}
     .checklist{display:grid;gap:9px;margin-top:10px}.check{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fffefa}.check input{margin-top:4px;accent-color:var(--green)} .check.done{text-decoration:line-through;color:#969087;background:#f5f2eb}
@@ -70,7 +67,7 @@
     .map-note{font-size:12px;color:var(--muted);margin-top:8px}
 
     @media(max-width:980px){.grid{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}.hero-card{width:100%;min-width:0}.side-stack{grid-template-columns:1fr 1fr}.map-card{order:-1}}
-    @media(max-width:680px){.wrap{padding:0 14px}header{padding-top:34px}.hero-card{padding:15px}.card{padding:17px}.day-title{align-items:flex-start}.day-title h2{font-size:25px}.badge{font-size:11px}.route:before{left:80px}.stop{grid-template-columns:70px 1fr;gap:17px}.dot{left:74px}.stop-title{font-size:16px}.side-stack{grid-template-columns:1fr}#map{height:310px}.hero h1{font-size:42px}}
+    @media(max-width:680px){.wrap{padding:0 14px}header{padding-top:34px}.hero-card{padding:15px}.card{padding:17px}.day-title{align-items:flex-start}.day-title h2{font-size:25px}.badge{font-size:11px}.route:before{left:80px}.stop{grid-template-columns:70px 1fr;gap:17px}.dot{left:74px}.stop-title{font-size:16px}.side-stack{grid-template-columns:1fr}.gmaps-wrap{height:310px}.hero h1{font-size:42px}}
   </style>
 </head>
 <body>
@@ -97,10 +94,9 @@
 
   <main class="wrap">
     <div id="panels"></div>
-    <div class="footer">地圖使用 OpenStreetMap 圖磚；門市／活動時間、交通班次與票券規則請於出發前再次確認。<br>地圖上的路線為行程示意，實際轉乘請以當日導航與交通狀況為準。</div>
+    <div class="footer">地圖改用 Google Maps 嵌入；門市／活動時間、交通班次與票券規則請於出發前再次確認。<br>行程中的「查看 Google Maps」按鈕可開啟即時導航與路線。</div>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     const days = [
       {
@@ -115,6 +111,7 @@
           ['Toy Story Hotel',35.6318,139.8846,'Tokyo Disney Resort Toy Story Hotel'],
           ['IKSPIARI',35.6357,139.8846,'イクスピアリ']
         ],
+        embed:'イクスピアリ 舞浜', zoom:16,
         links:[
           ['IKSPIARI 官方地圖','https://www.google.com/maps/search/?api=1&query=IKSPIARI+Maihama'],
           ['Toy Story Hotel','https://www.google.com/maps/search/?api=1&query=Tokyo+Disney+Resort+Toy+Story+Hotel']
@@ -135,6 +132,7 @@
           ['21:00–22:15','Hiyori','Maihama 站接駁 → Hiyori Hotel Maihama','🚐 以飯店當日接駁時間為準']
         ],
         places:[['Tokyo DisneySea',35.6269,139.8907,'東京ディズニーシー'],['Maihama Station',35.6362,139.8848,'舞浜駅'],['Hiyori Hotel Maihama',35.6350,139.9101,'Hiyori Hotel Maihama']],
+        embed:'東京ディズニーシー', zoom:14,
         links:[['DisneySea 官方地圖','https://www.google.com/maps/search/?api=1&query=Tokyo+DisneySea'],['Maihama Station','https://www.google.com/maps/search/?api=1&query=Maihama+Station']],
         side:`
           <div class="card side-card"><h3>行李策略</h3><div class="checklist" data-checklist="10-15">
@@ -165,6 +163,7 @@
           ['Kanda',35.6917,139.7709,'神田站'],['Okachimachi',35.7074,139.7740,'御徒町站'],['Kameari',35.7664,139.8476,'龜有站'],
           ['Asakusa ROX',35.7127,139.7958,'浅草ROX'],['Tokyo Skytree',35.7101,139.8107,'東京晴空塔'],['Don Quijote Akihabara',35.7010,139.7715,'ドン・キホーテ 秋葉原店']
         ],
+        embed:'浅草ROX 東京', zoom:13,
         links:[
           ['淺草 ROX','https://www.google.com/maps/search/?api=1&query=ROX+Asakusa+Tokyo'],
           ['思夢樂 淺草 ROX','https://www.google.com/maps/search/?api=1&query=Shimamura+Asakusa+ROX+Tokyo'],
@@ -189,6 +188,7 @@
           ['18:30–19:30','東京 → 神田','回飯店','🏨 放伴手禮再休息']
         ],
         places:[['Kamakura Station',35.3190,139.5503,'鎌倉站'],['Tsurugaoka Hachimangu',35.3261,139.5563,'鶴岡八幡宮'],['Komachi-dori',35.3220,139.5518,'小町通'],['Kotoku-in',35.3168,139.5364,'高德院大佛'],['Hasedera',35.3129,139.5330,'長谷寺'],['Tokyo Station',35.6812,139.7671,'東京站']],
+        embed:'鎌倉駅', zoom:13,
         links:[['鎌倉站','https://www.google.com/maps/search/?api=1&query=Kamakura+Station'],['鶴岡八幡宮','https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu'],['高德院','https://www.google.com/maps/search/?api=1&query=Kotoku-in+Kamakura'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station']],
         side:`
           <div class="card side-card"><h3>伴手禮策略</h3><div class="notice soft">10/17 先買「看到就想買、耐放」的品項；10/19 只補漏買的東西，返程壓力會小很多。</div></div>
@@ -209,6 +209,7 @@
           ['22:30 左右','神田集合','四人會合','🍢 再一起找居酒屋／宵夜']
         ],
         places:[['Sunshine City',35.7287,139.7195,'Sunshine City'],['RODEO CROWNS',35.7287,139.7195,'Sunshine City Alpa'],['HOKA Harajuku',35.6701,139.7024,'HOKA Harajuku'],['Mizuno Harajuku',35.6695,139.7056,'Mizuno Harajuku'],['Shibuya',35.6595,139.7005,'澀谷'],['Roppongi',35.6628,139.7314,'六本木']],
+        embed:'Sunshine City 池袋', zoom:13,
         links:[['Sunshine City','https://www.google.com/maps/search/?api=1&query=Sunshine+City+Ikebukuro'],['RODEO CROWNS','https://www.google.com/maps/search/?api=1&query=RODEO+CROWNS+Sunshine+City+Ikebukuro'],['HOKA Harajuku','https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku'],['Mizuno Harajuku','https://www.google.com/maps/search/?api=1&query=Mizuno+Harajuku'],['澀谷','https://www.google.com/maps/search/?api=1&query=Shibuya+Tokyo'],['六本木','https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo']],
         side:`
           <div class="card side-card"><h3>採購優先順序</h3><div class="shop"><span>RODEO CROWNS</span><span class="pill">池袋</span></div><div class="shop"><span>HOKA</span><span class="pill">原宿</span></div><div class="shop"><span>大國藥妝</span><span class="pill">澀谷備選</span></div><div class="shop"><span>唐吉訶德</span><span class="pill">10/16 已先買</span></div></div>
@@ -226,6 +227,7 @@
           ['15:30','成田起飛','Narita → Taichung','✈️ 15:30–18:10']
         ],
         places:[['Tokyo Station',35.6812,139.7671,'東京站'],['Yurakucho',35.6749,139.7626,'有樂町'],['Kanda',35.6917,139.7709,'神田'],['Narita Airport',35.7719,140.3929,'成田機場']],
+        embed:'東京車站', zoom:13,
         links:[['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['有樂町','https://www.google.com/maps/search/?api=1&query=Yurakucho+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
         side:`
           <div class="card side-card"><h3>返程優先順序</h3><div class="stats"><div class="stat"><b>15:30</b><span>成田起飛</span></div><div class="stat"><b>13:20</b><span>目標離開神田</span></div><div class="stat"><b>10/17</b><span>先買伴手禮</span></div><div class="stat"><b>10/19</b><span>只做補貨</span></div></div></div>
@@ -236,10 +238,21 @@
 
     const dayNav = document.getElementById('dayNav');
     const panels = document.getElementById('panels');
-    let map;
-    let mapLayer;
-
     function googleSearch(url){ return url; }
+
+    function googleEmbed(query, zoom=13){
+      return `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=${zoom}&output=embed`;
+    }
+
+    function googleDirections(places){
+      if(!places || places.length < 2) return null;
+      const origin = places[0][3];
+      const destination = places[places.length-1][3];
+      const waypoints = places.slice(1,-1).map(p=>p[3]).join('|');
+      let url=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=transit`;
+      if(waypoints) url += `&waypoints=${encodeURIComponent(waypoints)}`;
+      return url;
+    }
 
     days.forEach((d,i)=>{
       const btn=document.createElement('button');
@@ -260,12 +273,15 @@
             </div>
             <div class="card map-card">
               <div class="map-head"><div><div class="eyebrow">DAY MAP</div><h3>今天去哪裡？</h3></div><small>${d.places.length} 個主要地點</small></div>
-              <div id="map-${i}" style="height:360px"></div>
-              <div class="map-foot">${d.links.map(([name,url])=>`<a class="map-link" href="${googleSearch(url)}" target="_blank" rel="noopener">↗ ${name}</a>`).join('')}</div>
+              <div class="gmaps-wrap">
+                <iframe src="${googleEmbed(d.embed || d.places[0][3], d.zoom || 13)}" title="${d.label} Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                <div class="map-overlay">Google Maps｜可縮放、拖曳、查看街景</div>
+              </div>
+              <div class="map-foot">${d.links.map(([name,url])=>`<a class="map-link" href="${googleSearch(url)}" target="_blank" rel="noopener">↗ ${name}</a>`).join('')}${googleDirections(d.places)?`<a class="map-link" href="${googleDirections(d.places)}" target="_blank" rel="noopener">🗺️ 開啟今日路線</a>`:''}</div>
             </div>
           </div>
           <div class="side-stack">${d.side}
-            <div class="card side-card"><h3>今日地圖動線</h3><div class="route-strip">${d.places.map((p,idx)=>`${idx?'<span class="route-arrow">→</span>':''}<div class="route-node"><b>${idx+1}. ${p[0]}</b>${p[3]}</div>`).join('')}</div><div class="map-note">點地圖標記可開啟 Google Maps 對應地點。</div></div>
+            <div class="card side-card"><h3>今日地圖動線</h3><div class="route-strip">${d.places.map((p,idx)=>`${idx?'<span class="route-arrow">→</span>':''}<div class="route-node"><b>${idx+1}. ${p[0]}</b>${p[3]}</div>`).join('')}</div><div class="map-note">地圖直接使用 Google Maps；下方按鈕可開啟各景點或整天的即時路線。</div></div>
           </div>
         </div>`;
       panels.appendChild(panel);
@@ -275,33 +291,7 @@
       document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i));
       [...dayNav.children].forEach((b,j)=>b.classList.toggle('active',j===i));
       window.scrollTo({top:0,behavior:'smooth'});
-      setTimeout(()=>initMap(i),80);
     }
-
-    function initMap(i){
-      const d=days[i];
-      const el=document.getElementById(`map-${i}`);
-      if(!el || !window.L) return;
-      if(el.dataset.ready==='1') { if(map) map.invalidateSize(); return; }
-      const center=d.places.length? [d.places[0][1],d.places[0][2]] : [35.6812,139.7671];
-      const m=L.map(el,{scrollWheelZoom:false,zoomControl:true}).setView(center,12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(m);
-      const bounds=[];
-      d.places.forEach((p,idx)=>{
-        const icon=L.divIcon({className:'custom-pin',html:`<div class="pin">${idx+1}</div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-15]});
-        const marker=L.marker([p[1],p[2]],{icon}).addTo(m);
-        marker.bindPopup(`<b>${idx+1}. ${p[0]}</b><br>${p[3]}<br><br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[3])}" target="_blank" rel="noopener">在 Google Maps 開啟 ↗</a>`);
-        bounds.push([p[1],p[2]]);
-      });
-      if(bounds.length>1) m.fitBounds(bounds,{padding:[28,28]});
-      el.dataset.ready='1';
-      setTimeout(()=>m.invalidateSize(),150);
-      map=m;
-      mapLayer=m;
-    }
-
-    // Initialize first map after Leaflet loads.
-    window.addEventListener('load',()=>initMap(0));
 
     // Persist checklist state locally in browser.
     document.addEventListener('change',e=>{

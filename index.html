@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5efe4" />
-  <title>出國是免稅不是免費 東京 6天5夜｜2026.10.14–10.19</title>
+  <title>東京 6天5夜｜2026.10.14–10.19</title>
   <style>
     :root{
       --paper:#f5efe4; --paper2:#fbf8f1; --card:#fffdf8; --ink:#28251f; --muted:#7a756d;
@@ -68,15 +68,40 @@
     .map-note{font-size:12px;color:var(--muted);margin-top:8px}
 
 
+
+
+    /* Desktop horizontal route-strip: show a scrollbar and map mouse-wheel to horizontal scrolling. */
+    .route-strip{
+      cursor:grab;
+      scrollbar-width:thin;
+      scrollbar-color:#b9aa96 #eee7db;
+      overscroll-behavior-x:contain;
+      -webkit-overflow-scrolling:touch;
+    }
+    .route-strip:active{cursor:grabbing}
+    .route-strip::-webkit-scrollbar{height:10px;display:block}
+    .route-strip::-webkit-scrollbar-track{background:#eee7db;border-radius:999px}
+    .route-strip::-webkit-scrollbar-thumb{background:#b9aa96;border-radius:999px;border:2px solid #eee7db}
+    .route-strip::-webkit-scrollbar-thumb:hover{background:#9d8a74}
+    .route-strip-wrap{position:relative}
+    .route-scroll-hint{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:11px;user-select:none}
+
+    @media (max-width:680px), (hover:none){
+      .route-strip{scrollbar-width:none;cursor:auto}
+      .route-strip::-webkit-scrollbar{display:none;height:0}
+      .route-scroll-hint{display:none}
+    }
+
     /* expense tracker */
     .expense-card{margin-top:18px}
     .expense-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap}
     .expense-head h3{margin:0;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:24px}
     .expense-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
-    .people-editor{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .person-chip{display:flex;align-items:center;gap:6px;background:#fffaf2;border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 10px}
-    .person-chip input{width:74px;border:0;background:transparent;outline:0;color:var(--ink);font-weight:700;font-size:12px;min-width:0}
-    .person-chip button{border:0;background:transparent;color:#aa8f7b;cursor:pointer;font-size:14px;line-height:1;padding:2px}
+    .people-editor{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center;min-width:0}
+    .person-chip{display:inline-flex;align-items:center;gap:6px;background:#fffaf2;border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 10px;min-width:86px;max-width:150px;flex:0 1 auto;overflow:hidden}
+    .person-chip span{flex:0 0 auto}
+    .person-chip input{width:4em;min-width:4em;max-width:8em;border:0;background:transparent;outline:0;color:var(--ink);font-weight:700;font-size:13px;line-height:1.2;text-align:left;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .person-chip button{flex:0 0 auto;border:0;background:transparent;color:#aa8f7b;cursor:pointer;font-size:14px;line-height:1;padding:2px}
     .expense-form{display:grid;grid-template-columns:minmax(170px,1.6fr) minmax(120px,.8fr) minmax(150px,.9fr) auto;gap:10px;align-items:end}
     .field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px 2px}
     .field input[type="text"],.field input[type="number"],.field select{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;background:#fffefa;padding:0 12px;color:var(--ink);outline:none}
@@ -101,12 +126,12 @@
     .summary-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:18px}
     .expense-summary,.settlement-box{border:1px solid var(--line);border-radius:16px;background:#fbf8f1;padding:14px}
     .expense-summary h4,.settlement-box h4{margin:0 0 10px;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:18px}
-    .balance-row{display:grid;grid-template-columns:minmax(0,1fr) 80px 80px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:12px}
+    .balance-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(70px,80px) minmax(70px,80px);gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:12px;min-width:0}
     .balance-row:last-child{border-bottom:0}
-    .balance-row .b-name{font-weight:800;overflow-wrap:anywhere}
+    .balance-row .b-name{font-weight:800;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .balance-row .num{text-align:right}
     .positive{color:var(--green);font-weight:900}.negative{color:var(--red);font-weight:900}.zero{color:var(--muted)}
-    .settlement-list{display:grid;gap:8px}.settlement-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 11px;border-radius:12px;background:#fffefa;border:1px solid var(--line);font-size:12px}.settlement-item b{font-size:13px}.settlement-empty{font-size:12px;color:var(--muted)}
+    .settlement-list{display:grid;gap:8px}.settlement-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 11px;border-radius:12px;background:#fffefa;border:1px solid var(--line);font-size:12px;min-width:0}.settlement-item b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.settlement-empty{font-size:12px;color:var(--muted)}
     .expense-empty{padding:16px 4px;color:var(--muted);font-size:12px;text-align:center}
     .expense-footer{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.55}
     .overall-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef1eb;border:1px solid #d6dfd7;color:#4f5d53;font-size:11px}
@@ -137,7 +162,7 @@
     .overall-person-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     .overall-person{border:1px solid var(--line);border-radius:16px;background:#fffefa;padding:13px}
     .overall-person-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
-    .overall-person-head b{font-size:15px}.overall-person-head span{font-size:11px;color:var(--muted)}
+    .overall-person-head b{font-size:15px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.overall-person-head span{font-size:11px;color:var(--muted);flex:0 0 auto}
     .overall-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
     .overall-mini{background:#fbf8f1;border:1px solid #e8dfd2;border-radius:11px;padding:8px}
     .overall-mini span{display:block;color:var(--muted);font-size:10px}.overall-mini b{font-size:13px}
@@ -186,6 +211,8 @@
       .gmaps-wrap{height:380px;}
       .expense-form{grid-template-columns:minmax(220px,1.7fr) minmax(125px,.8fr) minmax(165px,.9fr) auto;}
       .expense-actions{min-width:86px;}
+      .people-editor{max-width:100%;}
+      .person-chip{flex:0 0 auto;}
       .expense-row{grid-template-columns:minmax(0,1.8fr) 140px 82px minmax(130px,1fr) auto;}
       .overall-hero{grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);}
     }
@@ -274,6 +301,8 @@
       .expense-row .payer,.expense-row .shared{font-size:11px}
       .expense-row .amount{grid-column:2;grid-row:1;text-align:right}.expense-row .row-actions{grid-column:2;text-align:right}
       .expense-row > .payer{grid-column:1;grid-row:2}.expense-row > .shared{display:none}
+      .person-chip{min-width:84px;max-width:140px;}
+      .person-chip input{width:4em;min-width:4em;}
       .expense-footer{font-size:10.5px}
     }
 
@@ -391,11 +420,11 @@
       {
         label:'10/14 抵達', title:'舞濱入住・IKSPIARI', color:'抵達日',
         route:[
-          ['07:00','台中機場集合','台中國際機場報到、托運、安檢','🛫 09:30 班機｜建議提前抵達'],
-          ['09:30','台中出發','台中國際機場 → 成田機場','✈️ 09:30–14:00'],
-          ['14:00–16:30','成田 → 舞濱','前往 Tokyo Disney Resort／Toy Story Hotel','🧳 抵達後以入住、寄放行李為優先'],
-          ['17:30–19:00','IKSPIARI','舞濱站旁購物中心','🛍️ Disney Store、3COINS、DAISO 等'],
-          ['19:00–20:00','晚餐','IKSPIARI 用餐','🍱 第一晚以輕鬆為主，回飯店準備迪士尼']
+          ['07:00–07:15','台中機場集合','台中國際機場報到、托運、安檢','🛫 09:30 班機｜4人集合'],
+          ['09:30–14:00','台中 → 成田','台中國際機場 → 成田機場','✈️ 抵達成田後入境、領行李'],
+          ['15:40–17:08','利木津巴士','成田機場第2航廈 → Toy Story Hotel','🚌 先抓 15:40 班次｜現場購票，不先鎖死'],
+          ['17:08–19:00','Toy Story Hotel','整理行李、入住、參觀飯店環境','🧳 留一點時間慢慢熟悉飯店'],
+          ['19:30–21:30','IKSPIARI','舞濱站旁購物中心：晚餐＋逛街','🛍️ Disney Store、3COINS、DAISO 等']
         ],
         places:[
           ['Toy Story Hotel',35.6318,139.8846,'Tokyo Disney Resort Toy Story Hotel'],
@@ -407,14 +436,14 @@
           ['Toy Story Hotel','https://www.google.com/maps/search/?api=1&query=Tokyo+Disney+Resort+Toy+Story+Hotel']
         ],
         side:`
-          <div class="card side-card"><h3>今晚住宿</h3><p><b>Tokyo Disney Resort Toy Story Hotel</b></p><p class="sub">隔天整天 DisneySea；晚上再移動至 Hiyori Hotel Maihama。</p></div>
+          <div class="card side-card"><h3>今晚住宿</h3><p><b>Tokyo Disney Resort Toy Story Hotel</b></p><p class="sub">15:40 利木津巴士先作預設班次，票券到成田現場確認；17:08 左右到飯店後整理、參觀，19:30 去 IKSPIARI。</p></div>
           <div class="card side-card"><h3>明日重點</h3><div class="notice">建議約 <b>07:00–07:15</b> 抵達 DisneySea 入口，留時間處理入園、App 與熱門設施。</div></div>
           <div class="card side-card"><h3>第一晚想逛的店</h3><div class="shop"><span>Disney Store</span><span class="pill">迪士尼</span></div><div class="shop"><span>3COINS</span><span class="pill">生活雜貨</span></div><div class="shop"><span>DAISO</span><span class="pill">平價雜貨</span></div>`
       },
       {
         label:'10/15 迪士尼', title:'DisneySea 全日', color:'迪士尼日',
         route:[
-          ['07:00–07:15','抵達 DisneySea','入口排隊','🎟️ 提前到場'],
+          ['07:30','抵達 DisneySea','入口排隊','🎟️ 以 07:30 到場為目標'],
           ['09:00','官方營業時間','正式入園','🌊 依熱門設施／DPA策略移動'],
           ['12:00','午餐','園區內就近用餐','🍴 不為吃飯大幅跨區'],
           ['18:00–20:30','夜間行程','晚餐＋夜景／遊行視當日安排','✨ 留意最後一輪熱門設施'],
@@ -483,42 +512,61 @@
           <div class="card side-card"><h3>今晚住宿</h3><p><b>HOTEL SUI Kanda by ABEST</b></p><p class="sub">10/16–10/18 共 3 晚。</p></div>`
       },
       {
-        label:'10/17 鎌倉', title:'鎌倉一日遊＋東京車站伴手禮', color:'古都日',
+        label:'10/17 鎌倉', title:'東京 → 鎌倉一日遊 → 銀座 Morikawa → 東京車站夜景', color:'古都日',
         route:[
-          ['08:00','神田出發','Kanda → Tokyo → Kamakura','🚃 JR＋橫須賀線方向'],
-          ['09:30–11:30','鶴岡八幡宮','神社＋周邊散步','⛩️ 上午主景點'],
-          ['11:30–13:00','小町通＋午餐','逛街＋吃飯','🍡 伴手禮少量買'],
-          ['13:00–16:00','長谷區','江之電 → 高德院大佛 → 長谷寺','🌊 視體力加海邊／高校附近'],
-          ['16:00–17:30','返回東京','Kamakura → Tokyo','🚃 JR 為主'],
-          ['17:30–18:30','東京車站','Gransta／Tokyo Character Street 等','🎁 先買耐放、常溫伴手禮'],
-          ['18:30–19:30','東京 → 神田','回飯店','🏨 放伴手禮再休息']
+          ['07:40–07:50','神田 → 東京','JR Kanda → Tokyo','🚃 先抓 5–10 分鐘的市區段'],
+          ['07:50–08:20','東京 → 橫濱','JR 到 Yokohama','🚃 交通時間約 25–30 分鐘；僅作轉乘時間參考'],
+          ['08:20–08:50','橫濱 → 鎌倉','JR 到 Kamakura','🚃 今天核心景點在鎌倉，橫濱以轉乘為主'],
+          ['09:00–10:00','鶴岡八幡宮','神社＋周邊散步','⛩️ 上午主景點'],
+          ['10:00–11:00','小町通','散步＋小吃／午餐','🍡 逛街不要拉太長'],
+          ['11:00–11:20','鎌倉 → 長谷','江之電','🚃 前往大佛區域'],
+          ['11:20–12:00','鎌倉大佛','高德院','🗿 主要拍照與參觀'],
+          ['12:00–12:30','長谷咖啡休息','咖啡＋補水','☕ 讓雙腳休息一下'],
+          ['12:30–13:15','長谷寺','寺院／景觀','🌿 視體力調整停留時間'],
+          ['13:15–13:35','長谷 → 鎌倉高校前','江之電','🚃 前往平交道'],
+          ['13:35–14:15','鎌倉高校前平交道','拍照＋看海','📸 江之電經典景點'],
+          ['14:15–15:30','返回東京','鎌倉 → 東京','🚃 JR 為主，保留緩衝'],
+          ['15:30–16:30','東京車站','Gransta／Tokyo Character Street 等','🎁 先買耐放、常溫伴手禮'],
+          ['16:30–17:30','東京車站／丸之內','東京站丸之內站前廣場＋周邊散步','🌇 傍晚先逛一小段，晚上再回來拍夜景'],
+          ['17:30–18:00','東京 → 銀座','前往東銀座／森川','🚇 留時間移動與找店'],
+          ['18:00–19:00','Morikawa（森川）','銀座 2-13-17｜晚餐','🍲 事先訂位較安心'],
+          ['19:10–20:30','免費東京車站夜景','KITTE → 新丸之內大樓 → 丸之內大樓 → 東京站廣場','🌃 四個免費夜景點慢慢散步'],
+          ['20:30–21:00','東京 → 神田','回飯店','🏨 放伴手禮、休息']
         ],
-        places:[['Kamakura Station',35.3190,139.5503,'鎌倉站'],['Tsurugaoka Hachimangu',35.3261,139.5563,'鶴岡八幡宮'],['Komachi-dori',35.3220,139.5518,'小町通'],['Kotoku-in',35.3168,139.5364,'高德院大佛'],['Hasedera',35.3129,139.5330,'長谷寺'],['Tokyo Station',35.6812,139.7671,'東京站']],
-        embed:'鎌倉駅', zoom:13,
-        links:[['鎌倉站','https://www.google.com/maps/search/?api=1&query=Kamakura+Station'],['鶴岡八幡宮','https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu'],['高德院','https://www.google.com/maps/search/?api=1&query=Kotoku-in+Kamakura'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station']],
+        places:[['Kamakura Station',35.3190,139.5503,'鎌倉站'],['Tsurugaoka Hachimangu',35.3261,139.5563,'鶴岡八幡宮'],['Komachi-dori',35.3220,139.5518,'小町通'],['Kotoku-in',35.3168,139.5364,'高德院大佛'],['Hasedera',35.3129,139.5330,'長谷寺'],['Kamakura High School Station',35.3069,139.4979,'鎌倉高校前站'],['Morikawa Ginza',35.6692,139.7672,'Morikawa／銀座2-13-17'],['Tokyo Station',35.6812,139.7671,'東京站']],
+        embed:'東京駅 丸の内 KITTE 銀座', zoom:12,
+        links:[['鎌倉站','https://www.google.com/maps/search/?api=1&query=Kamakura+Station'],['鶴岡八幡宮','https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu'],['高德院','https://www.google.com/maps/search/?api=1&query=Kotoku-in+Kamakura'],['鎌倉高校前','https://www.google.com/maps/search/?api=1&query=Kamakura+High+School+Station'],['Morikawa 森川','https://www.google.com/maps/search/?api=1&query=Morikawa+Ginza+2-13-17+Tokyo'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['KITTE','https://www.google.com/maps/search/?api=1&query=KITTE+Marunouchi+Tokyo'],['新丸之內大樓','https://www.google.com/maps/search/?api=1&query=Shin-Marunouchi+Building+Tokyo'],['丸之內大樓','https://www.google.com/maps/search/?api=1&query=Marunouchi+Building+Tokyo']],
         side:`
-          <div class="card side-card"><h3>伴手禮策略</h3><div class="notice soft">10/17 先買「看到就想買、耐放」的品項；10/19 只補漏買的東西，返程壓力會小很多。</div></div>
-          <div class="card side-card"><h3>鎌倉核心動線</h3><div class="route-strip"><div class="route-node"><b>鶴岡八幡宮</b>上午</div><span class="route-arrow">→</span><div class="route-node"><b>小町通</b>午餐</div><span class="route-arrow">→</span><div class="route-node"><b>江之電</b>前往長谷</div><span class="route-arrow">→</span><div class="route-node"><b>大佛・長谷寺</b>下午</div><span class="route-arrow">→</span><div class="route-node"><b>東京站</b>伴手禮</div></div></div>
-          <div class="card side-card"><h3>今天不要塞太滿</h3><p class="sub">鎌倉走路量會很高，所以東京車站以「買伴手禮」為主，不再加大型購物行程。</p></div>`
+          <div class="card side-card"><h3>伴手禮＋晚餐策略</h3><div class="notice soft">10/17 回到東京後先買第一輪耐放伴手禮，再去銀座吃 Morikawa；晚上回東京車站看免費夜景。10/19 只補漏買的東西。</div></div>
+          <div class="card side-card"><h3>🍲 Morikawa</h3><div class="shop"><span>森川（Morikawa）</span><span class="pill">18:00–19:00</span></div><p class="sub">銀座 2-13-17，預留約 1 小時用餐；小店建議事先訂位。</p></div>
+          <div class="card side-card"><h3>🌃 免費東京車站夜景</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="東京車站夜景動線，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>KITTE</b>夜景</div><span class="route-arrow">→</span><div class="route-node"><b>新丸之內大樓</b>7F</div><span class="route-arrow">→</span><div class="route-node"><b>丸之內大樓</b>5F</div><span class="route-arrow">→</span><div class="route-node"><b>東京站廣場</b>最後拍照</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
+          <div class="card side-card"><h3>鎌倉核心動線</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="鎌倉核心動線，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>鶴岡八幡宮</b>上午</div><span class="route-arrow">→</span><div class="route-node"><b>小町通</b>午餐</div><span class="route-arrow">→</span><div class="route-node"><b>大佛</b>長谷</div><span class="route-arrow">→</span><div class="route-node"><b>☕ 咖啡</b>休息</div><span class="route-arrow">→</span><div class="route-node"><b>鎌倉高校前</b>平交道</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
+          <div class="card side-card"><h3>今天不要塞太滿</h3><p class="sub">鎌倉走路量會很高，所以安排長谷咖啡休息；回東京後先買伴手禮，再吃晚餐，最後看夜景。</p></div>`
       },
       {
         label:'10/18 池袋', title:'Chiikawa → 池袋 → Harajuku／Shibuya → SUPER SPARK', color:'活動日',
         route:[
           ['09:20–09:25','神田出發','前往池袋','🚃 目標 09:45–09:50 抵達'],
           ['10:20–12:20','Chiikawa Park','Sunshine City Annex','🎟️ 10:20 場次'],
-          ['12:20–12:45','RODEO CROWNS','Sunshine City Alpa','👗 順路快速逛'],
-          ['12:45–13:45','燒肉あぶる 池袋店','午餐','🥩 保持彈性'],
-          ['14:40–15:30','HOKA Harajuku','鞋款試穿／考慮購買','👟 不強迫消費'],
-          ['15:30–16:00','Mizuno','快速逛','👟 沒有一定要買'],
-          ['16:00–17:30','原宿／澀谷','自由逛街＋移動','🛍️ 視體力調整'],
+          ['12:30–13:40','焼肉あぶる 池袋店','午餐','🥩 午餐保留彈性'],
+          ['13:45–14:25','Sunshine City 扭蛋','池袋太陽城扭蛋區／商場','🎰 抓 30–40 分鐘'],
+          ['14:25–14:40','RODEO CROWNS','Sunshine City Alpa｜備選','👗 有體力再快速逛，不一定要去'],
+          ['14:40–15:00','池袋 → 原宿','JR／地鐵移動','🚃 目標 15:00 左右抵達'],
+          ['15:00–15:40','ASICS FLAGSHIP HARAJUKU','鞋款試穿／逛店','👟 本日原宿優先'],
+          ['15:40–16:10','竹下通／原宿街區','散步＋自由逛','🛍️ 不必硬塞店家'],
+          ['16:10–16:45','咖啡休息','原宿咖啡廳｜備選 café STUDIO','☕ 讓雙腳休息，視體力可略過'],
+          ['16:45–17:10','HOKA Harajuku','鞋款試穿｜備選','👟 有興趣再逛，不一定要買'],
+          ['17:10–17:30','Mizuno','快速逛','👟 沒有一定要買'],
           ['17:30 起','分組','女生→六本木 SUPER SPARK；男生→原宿／澀谷自由逛','🎫 依第2場票券時間'],
           ['22:30 左右','神田集合','四人會合','🍢 再一起找居酒屋／宵夜']
         ],
-        places:[['Sunshine City',35.7287,139.7195,'Sunshine City'],['RODEO CROWNS',35.7287,139.7195,'Sunshine City Alpa'],['HOKA Harajuku',35.6701,139.7024,'HOKA Harajuku'],['Mizuno Harajuku',35.6695,139.7056,'Mizuno Harajuku'],['Shibuya',35.6595,139.7005,'澀谷'],['Roppongi',35.6628,139.7314,'六本木']],
+        places:[['Sunshine City',35.7287,139.7195,'Sunshine City'],['RODEO CROWNS',35.7287,139.7195,'Sunshine City Alpa'],['ASICS Harajuku',35.6687,139.7058,'ASICS FLAGSHIP HARAJUKU'],['HOKA Harajuku',35.6701,139.7024,'HOKA Harajuku'],['Mizuno Harajuku',35.6695,139.7056,'Mizuno Harajuku'],['Shibuya',35.6595,139.7005,'澀谷'],['Roppongi',35.6628,139.7314,'六本木']],
         embed:'Sunshine City 池袋', zoom:13,
-        links:[['Sunshine City','https://www.google.com/maps/search/?api=1&query=Sunshine+City+Ikebukuro'],['RODEO CROWNS','https://www.google.com/maps/search/?api=1&query=RODEO+CROWNS+Sunshine+City+Ikebukuro'],['HOKA Harajuku','https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku'],['Mizuno Harajuku','https://www.google.com/maps/search/?api=1&query=Mizuno+Harajuku'],['澀谷','https://www.google.com/maps/search/?api=1&query=Shibuya+Tokyo'],['六本木','https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo']],
+        links:[['Sunshine City','https://www.google.com/maps/search/?api=1&query=Sunshine+City+Ikebukuro'],['RODEO CROWNS','https://www.google.com/maps/search/?api=1&query=RODEO+CROWNS+Sunshine+City+Ikebukuro'],['ASICS Harajuku','https://www.google.com/maps/search/?api=1&query=ASICS+FLAGSHIP+HARAJUKU'],['HOKA Harajuku','https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku'],['Mizuno Harajuku','https://www.google.com/maps/search/?api=1&query=Mizuno+Harajuku'],['澀谷','https://www.google.com/maps/search/?api=1&query=Shibuya+Tokyo'],['六本木','https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo']],
         side:`
-          <div class="card side-card"><h3>採購優先順序</h3><div class="shop"><span>RODEO CROWNS</span><span class="pill">池袋</span></div><div class="shop"><span>HOKA</span><span class="pill">原宿</span></div><div class="shop"><span>大國藥妝</span><span class="pill">澀谷備選</span></div><div class="shop"><span>唐吉訶德</span><span class="pill">10/16 已先買</span></div></div>
+          <div class="card side-card"><h3>🛍️ 池袋段落</h3><div class="shop"><span>焼肉あぶる 池袋店</span><span class="pill">12:30 午餐</span></div><div class="shop"><span>Sunshine City 扭蛋</span><span class="pill">13:45–14:25</span></div><div class="shop"><span>RODEO CROWNS</span><span class="pill">備選</span></div></div>
+          <div class="card side-card"><h3>採購優先順序</h3><div class="shop"><span>ASICS FLAGSHIP HARAJUKU</span><span class="pill">原宿優先</span></div><div class="shop"><span>HOKA</span><span class="pill">原宿備選</span></div><div class="shop"><span>RODEO CROWNS</span><span class="pill">池袋備選</span></div><div class="shop"><span>大國藥妝</span><span class="pill">澀谷備選</span></div><div class="shop"><span>唐吉訶德</span><span class="pill">10/16 已先買</span></div></div>
+          <div class="card side-card"><h3>☕ 咖啡休息</h3><p class="sub">16:10–16:45 預留咖啡休息；如果當天精神很好可以直接跳過，避免變成趕行程。</p></div>
           <div class="card side-card"><h3>分組提醒</h3><div class="notice">SUPER SPARK 為固定活動。女生以票券上的第 2 場時間為準；男生可自行安排原宿／澀谷，不需要跟著女子場次移動。</div></div>
           <div class="card side-card"><h3>晚餐</h3><p class="sub">四人約 22:30 在神田集合；晚餐／宵夜以營業到晚間較穩定的店為主，當天再決定。</p></div>`
       },
@@ -540,7 +588,7 @@
         embed:'東京站 有樂町 神田 日暮里 成田', zoom:12,
         links:[['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['有樂町／MAPPA方向','https://www.google.com/maps/search/?api=1&query=Yurakucho+Tokyo'],['神田站','https://www.google.com/maps/search/?api=1&query=Kanda+Station+Tokyo'],['日暮里站','https://www.google.com/maps/search/?api=1&query=Nippori+Station+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
         side:`
-          <div class="card side-card"><h3>👥 10/19 兩隊分流</h3><div class="route-strip"><div class="route-node"><b>小王＋小施</b>MAPPA EXPO<br>目標 10:00 場</div><span class="route-arrow">↔</span><div class="route-node"><b>小郭＋小羅</b>東京車站<br>伴手禮</div><span class="route-arrow">→</span><div class="route-node"><b>11:30–11:45</b>神田會合<br>一起取行李</div></div></div>
+          <div class="card side-card"><h3>👥 10/19 兩隊分流</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="10/19 兩隊分流，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>小王＋小施</b>MAPPA EXPO<br>目標 10:00 場</div><span class="route-arrow">↔</span><div class="route-node"><b>小郭＋小羅</b>東京車站<br>伴手禮</div><span class="route-arrow">→</span><div class="route-node"><b>11:30–11:45</b>神田會合<br>一起取行李</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
           <div class="card side-card"><h3>返程優先順序</h3><div class="stats"><div class="stat"><b>10:00</b><span>MAPPA 目標場次</span></div><div class="stat"><b>11:30</b><span>神田重新集合</span></div><div class="stat"><b>13:00</b><span>目標抵達成田</span></div><div class="stat"><b>15:30</b><span>成田起飛</span></div></div></div>
           <div class="card side-card"><h3>📋 分流提醒</h3><div class="notice">四人一起退房後，把大行李留在神田飯店保管。小王、小施輕裝去 MAPPA；小郭、小羅去東京車站。約 11:30–11:45 回神田集合，再一起前往成田。</div></div>
           <div class="card side-card"><h3>🎬 MAPPA</h3><p class="sub">目標預約 10:00 場。若實際票券／入場狀況不同，以當天票券規則為準；11:20–11:30 左右離場比較適合後續機場節奏。</p></div>
@@ -851,7 +899,7 @@
             </div>
           </div>
           <div class="side-stack">${d.side}
-            <div class="card side-card"><h3>今日地圖動線</h3><div class="route-strip">${d.places.map((p,idx)=>`${idx?'<span class="route-arrow">→</span>':''}<div class="route-node"><b>${idx+1}. ${p[0]}</b>${p[3]}</div>`).join('')}</div><div class="map-note">地圖直接使用 Google Maps；下方按鈕可開啟各景點或整天的即時路線。</div></div>
+            <div class="card side-card"><h3>今日地圖動線</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="今日地圖動線，可左右拖曳或使用滑鼠滾輪橫向捲動">${d.places.map((p,idx)=>`${idx?'<span class="route-arrow">→</span>':''}<div class="route-node"><b>${idx+1}. ${p[0]}</b>${p[3]}</div>`).join('')}</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div><div class="map-note">地圖直接使用 Google Maps；下方按鈕可開啟各景點或整天的即時路線。</div></div>
           </div>
         </div>
         ${expenseTrackerTemplate(i, d.label)}
@@ -911,6 +959,21 @@
     document.addEventListener('change',e=>{
       if(e.target.matches('[data-dpa]')){ const state=loadDpa(); state[e.target.dataset.dpa]=e.target.checked; localStorage.setItem(DPA_TOTAL_KEY,JSON.stringify(state)); renderDpa(); }
     });
+
+
+
+    // Desktop UX: convert mouse-wheel vertical movement into horizontal scrolling
+    // when the pointer is over a horizontal route strip.
+    document.addEventListener('wheel', (e) => {
+      const strip = e.target.closest?.('.route-strip');
+      if (!strip || strip.scrollWidth <= strip.clientWidth) return;
+      // Avoid hijacking pinch/trackpad gestures.
+      if (e.ctrlKey || e.metaKey) return;
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const before = strip.scrollLeft;
+      strip.scrollLeft += e.deltaY;
+      if (strip.scrollLeft !== before) e.preventDefault();
+    }, {passive:false});
 
 </script>
 </body>

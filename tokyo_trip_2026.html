@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5efe4" />
+  <title>東京 6天5夜｜2026.10.14–10.19</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3uS0iQ3mHk6P9QvYH5mP2v7r7Q8U4=" crossorigin="" />
+  <style>
+    :root{
+      --paper:#f5efe4; --paper2:#fbf8f1; --card:#fffdf8; --ink:#28251f; --muted:#7a756d;
+      --line:#ded5c7; --red:#9d4b43; --red2:#ba695d; --green:#54685b; --blue:#5e7077;
+      --shadow:0 12px 32px rgba(52,42,28,.09); --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:
+      radial-gradient(circle at 15% 10%,rgba(157,75,67,.05),transparent 22%),
+      radial-gradient(circle at 85% 28%,rgba(84,104,91,.06),transparent 24%),
+      linear-gradient(180deg,#f8f2e7 0%,var(--paper) 48%,#f1eadf 100%);
+      font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.65}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .wrap{max-width:1220px;margin:auto;padding:0 22px}
+
+    /* Japanese travel postcard hero */
+    header{position:relative;overflow:hidden;background:#ebe4d7;border-bottom:1px solid var(--line);padding:44px 0 34px}
+    .sun{position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-95px;background:rgba(157,75,67,.10);box-shadow:0 0 0 18px rgba(157,75,67,.04),0 0 0 40px rgba(157,75,67,.025)}
+    .mountains{position:absolute;left:-40px;right:-40px;bottom:-46px;height:120px;opacity:.16;background:linear-gradient(135deg,transparent 0 30%,#7d8d80 30% 54%,transparent 54% 100%),linear-gradient(30deg,transparent 0 48%,#8a6e61 48% 70%,transparent 70% 100%);transform:skewX(-18deg)}
+    .hero{display:flex;justify-content:space-between;gap:28px;align-items:flex-end;position:relative;z-index:1}
+    .hero-copy{max-width:760px}
+    .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);font-weight:800;margin-bottom:8px}
+    h1{font-family:Georgia,"Times New Roman","Noto Serif TC",serif;margin:0;font-size:clamp(36px,6vw,66px);line-height:1.05;letter-spacing:-.03em}
+    .lead{margin:12px 0 0;color:#5e5a53;font-size:15px}
+    .hero-card{min-width:280px;background:rgba(255,253,248,.76);border:1px solid rgba(127,109,88,.2);backdrop-filter:blur(10px);border-radius:24px;padding:18px 20px;box-shadow:var(--shadow)}
+    .hero-card .stamp{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;border:2px solid var(--red);border-radius:50%;color:var(--red);font-weight:900;transform:rotate(-8deg);margin-bottom:8px;font-size:12px}
+    .hero-card strong{display:block;font-size:21px;letter-spacing:.03em}.hero-card small{display:block;color:var(--muted);margin-top:2px}
+
+    /* sticky day nav */
+    .toolbar{position:sticky;top:0;z-index:30;background:rgba(248,242,231,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(222,213,199,.9)}
+    .toolbar-inner{display:flex;gap:8px;overflow:auto;padding:12px 0;scrollbar-width:none}.toolbar-inner::-webkit-scrollbar{display:none}
+    .day-btn{border:1px solid var(--line);background:rgba(255,253,248,.9);color:var(--ink);padding:10px 14px;border-radius:999px;white-space:nowrap;cursor:pointer;transition:.2s;box-shadow:0 2px 0 rgba(0,0,0,.02)}
+    .day-btn:hover{transform:translateY(-1px)} .day-btn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+    main{padding:26px 0 70px}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(320px,.75fr);gap:22px}
+    .card{background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .card + .card{margin-top:18px}
+    .day-title{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:8px}.day-title h2{font-family:Georgia,"Times New Roman","Noto Serif TC",serif;margin:0;font-size:30px;line-height:1.2}.sub{color:var(--muted);font-size:14px}.badge{white-space:nowrap;background:#eee7db;border:1px solid #dfd4c6;padding:5px 10px;border-radius:999px;font-size:12px;color:#61594f}
+
+    /* timeline */
+    .route{position:relative;margin-top:20px}.route:before{content:"";position:absolute;left:101px;top:17px;bottom:22px;width:1px;background:var(--line)}
+    .stop{display:grid;grid-template-columns:90px 1fr;gap:24px;position:relative;padding:0 0 24px}.time{font-size:13px;font-weight:800;color:var(--red);padding-top:2px;text-align:right;letter-spacing:.01em}.dot{position:absolute;left:95px;top:2px;width:13px;height:13px;border:3px solid var(--ink);background:var(--card);border-radius:50%;z-index:2}.stop-body{padding-left:10px}.stop-title{font-size:17px;font-weight:800}.stop-note{font-size:14px;color:#625e57;margin-top:2px}.tag{display:inline-block;background:#f2ece2;border:1px solid #e4dacb;border-radius:999px;padding:3px 8px;font-size:11px;margin:7px 6px 0 0;color:#685f53}
+
+    /* map */
+    .map-card{padding:0;overflow:hidden}.map-head{padding:18px 20px 10px;display:flex;justify-content:space-between;gap:12px;align-items:flex-end}.map-head h3{margin:0;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:22px}.map-head small{color:var(--muted)}
+    #map{height:360px;width:100%;background:#e9e3d9}.leaflet-container{font-family:inherit}
+    .map-foot{padding:12px 16px 16px;display:flex;gap:8px;flex-wrap:wrap}.map-link{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}.map-link:hover{border-color:#b8a894;background:#fbf8f1}
+    .leaflet-popup-content-wrapper{border-radius:14px}.pin{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+
+    .side-stack{display:grid;gap:18px;align-content:start}.side-card h3{margin:0 0 10px;font-family:Georgia,"Times New Roman","Noto Serif TC",serif;font-size:21px}.side-card p{margin:6px 0}.notice{background:#faf0ea;border:1px solid #e7cbc1;color:#69423b;border-radius:16px;padding:13px 14px;font-size:14px}.soft{background:#eef1eb;border-color:#d6dfd7;color:#4f5d53}
+    .checklist{display:grid;gap:9px;margin-top:10px}.check{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fffefa}.check input{margin-top:4px;accent-color:var(--green)} .check.done{text-decoration:line-through;color:#969087;background:#f5f2eb}
+    .shop{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px dashed var(--line)}.shop:last-child{border-bottom:0}.pill{font-size:11px;padding:4px 8px;border-radius:999px;background:#f0ebe2;color:#635b50;white-space:nowrap}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#faf7f0;border:1px solid var(--line);border-radius:15px;padding:12px}.stat b{display:block;font-size:18px}.stat span{font-size:11px;color:var(--muted)}
+    .mini-table{width:100%;border-collapse:collapse;font-size:13px}.mini-table td{padding:8px 2px;border-bottom:1px solid var(--line)}.mini-table td:last-child{text-align:right;font-weight:800}
+    .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:30px}
+
+    /* route strip */
+    .route-strip{display:flex;align-items:center;gap:7px;overflow:auto;padding:5px 2px 2px;scrollbar-width:none}.route-strip::-webkit-scrollbar{display:none}.route-node{min-width:112px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fffcf7;font-size:12px}.route-node b{display:block;font-size:13px}.route-arrow{color:#a08f7e;font-size:16px}
+    .map-note{font-size:12px;color:var(--muted);margin-top:8px}
+
+    @media(max-width:980px){.grid{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}.hero-card{width:100%;min-width:0}.side-stack{grid-template-columns:1fr 1fr}.map-card{order:-1}}
+    @media(max-width:680px){.wrap{padding:0 14px}header{padding-top:34px}.hero-card{padding:15px}.card{padding:17px}.day-title{align-items:flex-start}.day-title h2{font-size:25px}.badge{font-size:11px}.route:before{left:80px}.stop{grid-template-columns:70px 1fr;gap:17px}.dot{left:74px}.stop-title{font-size:16px}.side-stack{grid-template-columns:1fr}#map{height:310px}.hero h1{font-size:42px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="sun"></div><div class="mountains"></div>
+    <div class="wrap">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">TOKYO • TRAVEL NOTEBOOK</div>
+          <h1>東京 6天5夜</h1>
+          <p class="lead">2026/10/14（三）— 10/19（一）｜4人旅行｜舞濱、龜有、鎌倉、池袋、澀谷</p>
+        </div>
+        <div class="hero-card">
+          <div class="stamp">旅 行</div>
+          <strong>舞濱 → 神田</strong>
+          <small>Toy Story Hotel → Hiyori → HOTEL SUI Kanda</small>
+          <small style="margin-top:8px">把行程留一點空白，才有旅行感。</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="toolbar"><div class="wrap toolbar-inner" id="dayNav"></div></div>
+
+  <main class="wrap">
+    <div id="panels"></div>
+    <div class="footer">地圖使用 OpenStreetMap 圖磚；門市／活動時間、交通班次與票券規則請於出發前再次確認。<br>地圖上的路線為行程示意，實際轉乘請以當日導航與交通狀況為準。</div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const days = [
+      {
+        label:'10/14 抵達', title:'舞濱入住・IKSPIARI', color:'抵達日',
+        route:[
+          ['09:30','台中出發','台中國際機場 → 成田機場','✈️ 09:30–14:00'],
+          ['14:00–16:30','成田 → 舞濱','前往 Tokyo Disney Resort／Toy Story Hotel','🧳 抵達後以入住、寄放行李為優先'],
+          ['17:30–19:00','IKSPIARI','舞濱站旁購物中心','🛍️ Disney Store、3COINS、DAISO 等'],
+          ['19:00–20:00','晚餐','IKSPIARI 用餐','🍱 第一晚以輕鬆為主，回飯店準備迪士尼']
+        ],
+        places:[
+          ['Toy Story Hotel',35.6318,139.8846,'Tokyo Disney Resort Toy Story Hotel'],
+          ['IKSPIARI',35.6357,139.8846,'イクスピアリ']
+        ],
+        links:[
+          ['IKSPIARI 官方地圖','https://www.google.com/maps/search/?api=1&query=IKSPIARI+Maihama'],
+          ['Toy Story Hotel','https://www.google.com/maps/search/?api=1&query=Tokyo+Disney+Resort+Toy+Story+Hotel']
+        ],
+        side:`
+          <div class="card side-card"><h3>今晚住宿</h3><p><b>Tokyo Disney Resort Toy Story Hotel</b></p><p class="sub">隔天整天 DisneySea；晚上再移動至 Hiyori Hotel Maihama。</p></div>
+          <div class="card side-card"><h3>明日重點</h3><div class="notice">建議約 <b>07:00–07:15</b> 抵達 DisneySea 入口，留時間處理入園、App 與熱門設施。</div></div>
+          <div class="card side-card"><h3>第一晚想逛的店</h3><div class="shop"><span>Disney Store</span><span class="pill">迪士尼</span></div><div class="shop"><span>3COINS</span><span class="pill">生活雜貨</span></div><div class="shop"><span>DAISO</span><span class="pill">平價雜貨</span></div>`
+      },
+      {
+        label:'10/15 迪士尼', title:'DisneySea 全日', color:'迪士尼日',
+        route:[
+          ['07:00–07:15','抵達 DisneySea','入口排隊','🎟️ 提前到場'],
+          ['09:00','官方營業時間','正式入園','🌊 依熱門設施／DPA策略移動'],
+          ['12:00','午餐','園區內就近用餐','🍴 不為吃飯大幅跨區'],
+          ['18:00–20:30','夜間行程','晚餐＋夜景／遊行視當日安排','✨ 留意最後一輪熱門設施'],
+          ['20:30–21:00','離園','前往行李／移動','🧳 前往 Maihama Welcome Center 取行李'],
+          ['21:00–22:15','Hiyori','Maihama 站接駁 → Hiyori Hotel Maihama','🚐 以飯店當日接駁時間為準']
+        ],
+        places:[['Tokyo DisneySea',35.6269,139.8907,'東京ディズニーシー'],['Maihama Station',35.6362,139.8848,'舞浜駅'],['Hiyori Hotel Maihama',35.6350,139.9101,'Hiyori Hotel Maihama']],
+        links:[['DisneySea 官方地圖','https://www.google.com/maps/search/?api=1&query=Tokyo+DisneySea'],['Maihama Station','https://www.google.com/maps/search/?api=1&query=Maihama+Station']],
+        side:`
+          <div class="card side-card"><h3>行李策略</h3><div class="checklist" data-checklist="10-15">
+            <label class="check"><input type="checkbox" data-key="10-15-a">10/15 早上至 Toy Story Hotel 2F Guest Service 辦理 Station Delivery</label>
+            <label class="check"><input type="checkbox" data-key="10-15-b">DisneySea 玩完至 Maihama Welcome Center 取行李</label>
+            <label class="check"><input type="checkbox" data-key="10-15-c">以 21:00 前完成取件為目標</label>
+          </div></div>
+          <div class="card side-card"><h3>今晚住宿</h3><p><b>Hiyori Hotel Maihama</b></p><p class="sub">10/16 退房後前往神田。</p></div>
+          <div class="card side-card"><h3>小提醒</h3><div class="notice soft">行程已經很滿，10/15 不再安排市區購物，專心玩 DisneySea。</div></div>`
+      },
+      {
+        label:'10/16 龜有', title:'龜有 → 淺草思夢樂＋GU → 晴空塔 → 秋葉原', color:'購物日',
+        route:[
+          ['08:00–08:30','退房','Hiyori → Maihama Station','🚐 先搭飯店接駁'],
+          ['08:30–09:40','移動＋寄行李','Maihama → Tokyo → Kanda','🧳 HOTEL SUI Kanda 放行李'],
+          ['09:40–10:10','神田 → 御徒町','JR 山手線／京濱東北線','🚃 前往咖啡與戶外用品'],
+          ['10:10–11:10','Egg Baby Cafe','早午餐／咖啡','☕ 行程補給'],
+          ['11:10–12:00','Mont-bell 御徒町','戶外用品','🛍️ 抓約 1 小時'],
+          ['12:00–12:40','御徒町 → 龜有','JR 移動','🚃 留意轉乘'],
+          ['12:40–14:00','龜有','Kochikame 銅像＋商店街＋Ario','📸 散步、拍照，不逛太晚'],
+          ['14:00–15:30','淺草 ROX・3G','しまむら 思夢樂 → GU','👚 本日購物核心'],
+          ['16:00–18:00','晴空塔／Solamachi','逛街＋拍照','🗼 不一定要上展望台'],
+          ['18:00–19:00','晚餐','晴空塔周邊','🍢 燒鳥／居酒屋方向'],
+          ['19:00–20:30','秋葉原 Don Quijote','唐吉訶德','🛒 零食、日用品、藥妝'],
+          ['20:30–21:00','回神田','秋葉原 → Kanda','🏨 回飯店休息']
+        ],
+        places:[
+          ['Kanda',35.6917,139.7709,'神田站'],['Okachimachi',35.7074,139.7740,'御徒町站'],['Kameari',35.7664,139.8476,'龜有站'],
+          ['Asakusa ROX',35.7127,139.7958,'浅草ROX'],['Tokyo Skytree',35.7101,139.8107,'東京晴空塔'],['Don Quijote Akihabara',35.7010,139.7715,'ドン・キホーテ 秋葉原店']
+        ],
+        links:[
+          ['淺草 ROX','https://www.google.com/maps/search/?api=1&query=ROX+Asakusa+Tokyo'],
+          ['思夢樂 淺草 ROX','https://www.google.com/maps/search/?api=1&query=Shimamura+Asakusa+ROX+Tokyo'],
+          ['GU 淺草','https://www.google.com/maps/search/?api=1&query=GU+Asakusa+ROX+Tokyo'],
+          ['晴空塔','https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree'],
+          ['唐吉訶德秋葉原','https://www.google.com/maps/search/?api=1&query=Don+Quijote+Akihabara']
+        ],
+        side:`
+          <div class="card side-card"><h3>今天最值得買</h3><div class="shop"><span>しまむら 思夢樂</span><span class="pill">服飾／雜貨</span></div><div class="shop"><span>GU</span><span class="pill">服飾／聯名</span></div><div class="shop"><span>Don Quijote 秋葉原</span><span class="pill">藥妝／零食</span></div><div class="shop"><span>Mont-bell</span><span class="pill">戶外用品</span></div></div>
+          <div class="card side-card"><h3>行程邏輯</h3><div class="notice">把「思夢樂＋GU」集中在淺草 ROX・3G，再往晴空塔，晚上去秋葉原唐吉訶德，10/18 就不用再塞唐吉訶德。</div></div>
+          <div class="card side-card"><h3>今晚住宿</h3><p><b>HOTEL SUI Kanda by ABEST</b></p><p class="sub">10/16–10/18 共 3 晚。</p></div>`
+      },
+      {
+        label:'10/17 鎌倉', title:'鎌倉一日遊＋東京車站伴手禮', color:'古都日',
+        route:[
+          ['08:00','神田出發','Kanda → Tokyo → Kamakura','🚃 JR＋橫須賀線方向'],
+          ['09:30–11:30','鶴岡八幡宮','神社＋周邊散步','⛩️ 上午主景點'],
+          ['11:30–13:00','小町通＋午餐','逛街＋吃飯','🍡 伴手禮少量買'],
+          ['13:00–16:00','長谷區','江之電 → 高德院大佛 → 長谷寺','🌊 視體力加海邊／高校附近'],
+          ['16:00–17:30','返回東京','Kamakura → Tokyo','🚃 JR 為主'],
+          ['17:30–18:30','東京車站','Gransta／Tokyo Character Street 等','🎁 先買耐放、常溫伴手禮'],
+          ['18:30–19:30','東京 → 神田','回飯店','🏨 放伴手禮再休息']
+        ],
+        places:[['Kamakura Station',35.3190,139.5503,'鎌倉站'],['Tsurugaoka Hachimangu',35.3261,139.5563,'鶴岡八幡宮'],['Komachi-dori',35.3220,139.5518,'小町通'],['Kotoku-in',35.3168,139.5364,'高德院大佛'],['Hasedera',35.3129,139.5330,'長谷寺'],['Tokyo Station',35.6812,139.7671,'東京站']],
+        links:[['鎌倉站','https://www.google.com/maps/search/?api=1&query=Kamakura+Station'],['鶴岡八幡宮','https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu'],['高德院','https://www.google.com/maps/search/?api=1&query=Kotoku-in+Kamakura'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station']],
+        side:`
+          <div class="card side-card"><h3>伴手禮策略</h3><div class="notice soft">10/17 先買「看到就想買、耐放」的品項；10/19 只補漏買的東西，返程壓力會小很多。</div></div>
+          <div class="card side-card"><h3>鎌倉核心動線</h3><div class="route-strip"><div class="route-node"><b>鶴岡八幡宮</b>上午</div><span class="route-arrow">→</span><div class="route-node"><b>小町通</b>午餐</div><span class="route-arrow">→</span><div class="route-node"><b>江之電</b>前往長谷</div><span class="route-arrow">→</span><div class="route-node"><b>大佛・長谷寺</b>下午</div><span class="route-arrow">→</span><div class="route-node"><b>東京站</b>伴手禮</div></div></div>
+          <div class="card side-card"><h3>今天不要塞太滿</h3><p class="sub">鎌倉走路量會很高，所以東京車站以「買伴手禮」為主，不再加大型購物行程。</p></div>`
+      },
+      {
+        label:'10/18 池袋', title:'Chiikawa → 池袋 → Harajuku／Shibuya → SUPER SPARK', color:'活動日',
+        route:[
+          ['09:20–09:25','神田出發','前往池袋','🚃 目標 09:45–09:50 抵達'],
+          ['10:20–12:20','Chiikawa Park','Sunshine City Annex','🎟️ 10:20 場次'],
+          ['12:20–12:45','RODEO CROWNS','Sunshine City Alpa','👗 順路快速逛'],
+          ['12:45–13:45','燒肉あぶる 池袋店','午餐','🥩 保持彈性'],
+          ['14:40–15:30','HOKA Harajuku','鞋款試穿／考慮購買','👟 不強迫消費'],
+          ['15:30–16:00','Mizuno','快速逛','👟 沒有一定要買'],
+          ['16:00–17:30','原宿／澀谷','自由逛街＋移動','🛍️ 視體力調整'],
+          ['17:30 起','分組','女生→六本木 SUPER SPARK；男生→原宿／澀谷自由逛','🎫 依第2場票券時間'],
+          ['22:30 左右','神田集合','四人會合','🍢 再一起找居酒屋／宵夜']
+        ],
+        places:[['Sunshine City',35.7287,139.7195,'Sunshine City'],['RODEO CROWNS',35.7287,139.7195,'Sunshine City Alpa'],['HOKA Harajuku',35.6701,139.7024,'HOKA Harajuku'],['Mizuno Harajuku',35.6695,139.7056,'Mizuno Harajuku'],['Shibuya',35.6595,139.7005,'澀谷'],['Roppongi',35.6628,139.7314,'六本木']],
+        links:[['Sunshine City','https://www.google.com/maps/search/?api=1&query=Sunshine+City+Ikebukuro'],['RODEO CROWNS','https://www.google.com/maps/search/?api=1&query=RODEO+CROWNS+Sunshine+City+Ikebukuro'],['HOKA Harajuku','https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku'],['Mizuno Harajuku','https://www.google.com/maps/search/?api=1&query=Mizuno+Harajuku'],['澀谷','https://www.google.com/maps/search/?api=1&query=Shibuya+Tokyo'],['六本木','https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo']],
+        side:`
+          <div class="card side-card"><h3>採購優先順序</h3><div class="shop"><span>RODEO CROWNS</span><span class="pill">池袋</span></div><div class="shop"><span>HOKA</span><span class="pill">原宿</span></div><div class="shop"><span>大國藥妝</span><span class="pill">澀谷備選</span></div><div class="shop"><span>唐吉訶德</span><span class="pill">10/16 已先買</span></div></div>
+          <div class="card side-card"><h3>分組提醒</h3><div class="notice">SUPER SPARK 為固定活動。女生以票券上的第 2 場時間為準；男生可自行安排原宿／澀谷，不需要跟著女子場次移動。</div></div>
+          <div class="card side-card"><h3>晚餐</h3><p class="sub">四人約 22:30 在神田集合；晚餐／宵夜以營業到晚間較穩定的店為主，當天再決定。</p></div>`
+      },
+      {
+        label:'10/19 回台', title:'東京車站／MAPPA → 成田', color:'返程日',
+        route:[
+          ['08:30–09:30','退房前整理','神田飯店','🧳 檢查戰利品、護照與行李'],
+          ['09:00–09:45','東京車站','補買伴手禮','🎁 10/17 若已買大部分，今天只需補貨'],
+          ['10:00–11:30','MAPPA 活動','有樂町方向','🎬 依實際票券／開放時間為準'],
+          ['11:30–12:30','午餐＋回神田','取行李','🍱 不排距離太遠的餐廳'],
+          ['12:30–13:20','神田 → 日暮里／成田','前往成田機場','🚆 以提早抵達機場為目標'],
+          ['15:30','成田起飛','Narita → Taichung','✈️ 15:30–18:10']
+        ],
+        places:[['Tokyo Station',35.6812,139.7671,'東京站'],['Yurakucho',35.6749,139.7626,'有樂町'],['Kanda',35.6917,139.7709,'神田'],['Narita Airport',35.7719,140.3929,'成田機場']],
+        links:[['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['有樂町','https://www.google.com/maps/search/?api=1&query=Yurakucho+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
+        side:`
+          <div class="card side-card"><h3>返程優先順序</h3><div class="stats"><div class="stat"><b>15:30</b><span>成田起飛</span></div><div class="stat"><b>13:20</b><span>目標離開神田</span></div><div class="stat"><b>10/17</b><span>先買伴手禮</span></div><div class="stat"><b>10/19</b><span>只做補貨</span></div></div></div>
+          <div class="card side-card"><h3>注意</h3><div class="notice">MAPPA 展覽日期、入場時間與票券安排務必在出發前再次核對。返程日不建議臨時增加大型購物。</div></div>
+          <div class="card side-card"><h3>航班</h3><table class="mini-table"><tr><td>成田 → 台中</td><td>15:30–18:10</td></tr></table></div>`
+      }
+    ];
+
+    const dayNav = document.getElementById('dayNav');
+    const panels = document.getElementById('panels');
+    let map;
+    let mapLayer;
+
+    function googleSearch(url){ return url; }
+
+    days.forEach((d,i)=>{
+      const btn=document.createElement('button');
+      btn.className='day-btn'+(i===0?' active':'');
+      btn.textContent=d.label;
+      btn.addEventListener('click',()=>showDay(i));
+      dayNav.appendChild(btn);
+
+      const panel=document.createElement('section');
+      panel.className='panel'+(i===0?' active':'');
+      panel.id='day-'+i;
+      panel.innerHTML=`
+        <div class="grid">
+          <div>
+            <div class="card">
+              <div class="day-title"><div><div class="eyebrow">${d.color}</div><h2>${d.title}</h2><p class="sub">依目前共識整理｜點日期切換</p></div><div class="badge">10月 ${14+i} 日</div></div>
+              <div class="route">${d.route.map(s=>`<div class="stop"><div class="time">${s[0]}</div><div class="dot"></div><div class="stop-body"><div class="stop-title">${s[1]}</div><div class="stop-note">${s[2]}</div><span class="tag">${s[3]}</span></div></div>`).join('')}</div>
+            </div>
+            <div class="card map-card">
+              <div class="map-head"><div><div class="eyebrow">DAY MAP</div><h3>今天去哪裡？</h3></div><small>${d.places.length} 個主要地點</small></div>
+              <div id="map-${i}" style="height:360px"></div>
+              <div class="map-foot">${d.links.map(([name,url])=>`<a class="map-link" href="${googleSearch(url)}" target="_blank" rel="noopener">↗ ${name}</a>`).join('')}</div>
+            </div>
+          </div>
+          <div class="side-stack">${d.side}
+            <div class="card side-card"><h3>今日地圖動線</h3><div class="route-strip">${d.places.map((p,idx)=>`${idx?'<span class="route-arrow">→</span>':''}<div class="route-node"><b>${idx+1}. ${p[0]}</b>${p[3]}</div>`).join('')}</div><div class="map-note">點地圖標記可開啟 Google Maps 對應地點。</div></div>
+          </div>
+        </div>`;
+      panels.appendChild(panel);
+    });
+
+    function showDay(i){
+      document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+      [...dayNav.children].forEach((b,j)=>b.classList.toggle('active',j===i));
+      window.scrollTo({top:0,behavior:'smooth'});
+      setTimeout(()=>initMap(i),80);
+    }
+
+    function initMap(i){
+      const d=days[i];
+      const el=document.getElementById(`map-${i}`);
+      if(!el || !window.L) return;
+      if(el.dataset.ready==='1') { if(map) map.invalidateSize(); return; }
+      const center=d.places.length? [d.places[0][1],d.places[0][2]] : [35.6812,139.7671];
+      const m=L.map(el,{scrollWheelZoom:false,zoomControl:true}).setView(center,12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(m);
+      const bounds=[];
+      d.places.forEach((p,idx)=>{
+        const icon=L.divIcon({className:'custom-pin',html:`<div class="pin">${idx+1}</div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-15]});
+        const marker=L.marker([p[1],p[2]],{icon}).addTo(m);
+        marker.bindPopup(`<b>${idx+1}. ${p[0]}</b><br>${p[3]}<br><br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[3])}" target="_blank" rel="noopener">在 Google Maps 開啟 ↗</a>`);
+        bounds.push([p[1],p[2]]);
+      });
+      if(bounds.length>1) m.fitBounds(bounds,{padding:[28,28]});
+      el.dataset.ready='1';
+      setTimeout(()=>m.invalidateSize(),150);
+      map=m;
+      mapLayer=m;
+    }
+
+    // Initialize first map after Leaflet loads.
+    window.addEventListener('load',()=>initMap(0));
+
+    // Persist checklist state locally in browser.
+    document.addEventListener('change',e=>{
+      if(e.target.matches('.check input')){
+        const key=e.target.dataset.key; if(!key) return;
+        localStorage.setItem('tokyo-check-'+key,e.target.checked?'1':'0');
+        e.target.closest('.check').classList.toggle('done',e.target.checked);
+      }
+    });
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.querySelectorAll('.check input[data-key]').forEach(input=>{
+        const done=localStorage.getItem('tokyo-check-'+input.dataset.key)==='1';
+        input.checked=done; input.closest('.check').classList.toggle('done',done);
+      });
+    });
+  </script>
+</body>
+</html>

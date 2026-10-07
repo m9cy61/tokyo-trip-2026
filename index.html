@@ -143,7 +143,15 @@
     .dpa-item input{accent-color:var(--red);margin:0}
     .dpa-item span{min-width:0;overflow-wrap:anywhere}
     .dpa-item b{white-space:nowrap;font-size:11px}
-    .dpa-total{margin-top:10px;padding:9px 10px;border-radius:12px;background:#faf7f0;border:1px solid var(--line);font-size:12px}
+  .dpa-expense-btn{
+  margin-top:8px;
+  width:100%;
+}
+
+.dpa-expense-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
     .dpa-section-label{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:900;padding:7px 2px 2px}
     .dpa-note-inline{display:inline-block;margin-left:6px;font-size:10px;color:var(--muted);font-weight:700}
 
@@ -514,7 +522,12 @@
               <div class="dpa-section-label">🎆 遊行／表演</div>
               <label class="dpa-item"><input type="checkbox" data-dpa="believe"><span>🌊 Believe!～Sea of Dreams～<small class="dpa-note-inline">10/15 19:30</small></span><b>¥2,500</b></label>
             </div>
-            <div class="dpa-total">已勾選：<b data-dpa-total>¥0</b>／4人預估：<b data-dpa-total-4>¥0</b></div>
+           <div class="dpa-total">
+  <div>已勾選：<b data-dpa-total>¥0</b>／4人合計：<b data-dpa-total-4>¥0</b></div>
+  <button type="button" class="ghost-btn dpa-expense-btn" data-dpa-add-expense disabled>
+    ＋ 將 DPA 總額帶入今日記帳
+  </button>
+</div>
             <div class="map-note">10/15 官方日程中，Believe!～Sea of Dreams～為 Disney Premier Access 對象，場次 19:30；其餘演出是否提供 DPA 以東京迪士尼度假區官方 App 當日顯示為準。</div>
           </div>
           <div class="card side-card"><h3>小提醒</h3><div class="notice soft">行程已經很滿，10/15 不再安排市區購物，專心玩 DisneySea。</div></div>`
@@ -1151,33 +1164,210 @@
       }
     });
       // DPA selection state for DisneySea 10/15.
-    const DPA_TOTAL_KEY = 'tokyo-dpa-v1';
-    const DPA_PRICES = { anna:2500, rapunzel:2000, peter:2000, soaring:2500, toystory:2000, journey:2000, raging:1500, believe:2500 };
-    function loadDpa(){
-      if(cloudTripId) return {...cloudSharedItems.dpa};
-      try{ const raw=localStorage.getItem(DPA_TOTAL_KEY); return raw?JSON.parse(raw):{}; }catch{return {}}
-    }
-    function renderDpa(){
-      const boxes=document.querySelectorAll('[data-dpa]'); if(!boxes.length)return;
-      const state=loadDpa(); let total=0;
-      boxes.forEach(b=>{ b.checked=!!state[b.dataset.dpa]; if(b.checked) total+=DPA_PRICES[b.dataset.dpa]||0; });
-      const one=document.querySelector('[data-dpa-total]'); const four=document.querySelector('[data-dpa-total-4]');
-      if(one) one.textContent=money(total); if(four) four.textContent=money(total*4);
-    }
-    document.addEventListener('change',async e=>{
-      if(!e.target.matches('[data-dpa]')) return;
-      const key=e.target.dataset.dpa;
-      try{
-        if(cloudTripId && sbClient){await setCloudSharedItem('dpa',key,e.target.checked);}
-        else{ const state=loadDpa(); state[key]=e.target.checked; localStorage.setItem(DPA_TOTAL_KEY,JSON.stringify(state)); }
-        renderDpa();
-      }catch(err){
-        console.error('DPA sync failed',err);
-        alert(`同步 DPA 狀態失敗：${err.message||err}`);
-        e.target.checked=!e.target.checked;
-        renderDpa();
-      }
+   // DPA selection state for DisneySea 10/15.
+const DPA_TOTAL_KEY = 'tokyo-dpa-v1';
+
+const DPA_PRICES = {
+  anna:2500,
+  rapunzel:2000,
+  peter:2000,
+  soaring:2500,
+  toystory:2000,
+  journey:2000,
+  raging:1500,
+  believe:2500
+};
+
+function loadDpa(){
+  if(cloudTripId) return {...cloudSharedItems.dpa};
+
+  try{
+    const raw=localStorage.getItem(DPA_TOTAL_KEY);
+    return raw?JSON.parse(raw):{};
+  }catch{
+    return {};
+  }
+}
+
+function getDpaSelection(){
+  const state=loadDpa();
+
+  return Object.keys(state)
+    .filter(key=>state[key] && DPA_PRICES[key])
+    .map(key=>{
+      const box=document.querySelector(`[data-dpa="${key}"]`);
+      const name=box?.closest('.dpa-item')?.querySelector('span')?.innerText?.trim() || key;
+
+      return {
+        key,
+        name,
+        price:DPA_PRICES[key]
+      };
     });
+}
+
+function getDpaTotal(){
+  return getDpaSelection()
+    .reduce((sum,item)=>sum + item.price,0);
+}
+
+function renderDpa(){
+
+  const boxes=document.querySelectorAll('[data-dpa]');
+  if(!boxes.length)return;
+
+  const state=loadDpa();
+  let total=0;
+
+  boxes.forEach(b=>{
+    b.checked=!!state[b.dataset.dpa];
+
+    if(b.checked){
+      total+=DPA_PRICES[b.dataset.dpa]||0;
+    }
+  });
+
+  const fourTotal=total*4;
+
+  const one=document.querySelector('[data-dpa-total]');
+  const four=document.querySelector('[data-dpa-total-4]');
+  const addBtn=document.querySelector('[data-dpa-add-expense]');
+
+  if(one) one.textContent=money(total);
+  if(four) four.textContent=money(fourTotal);
+
+  if(addBtn){
+    addBtn.disabled=total<=0;
+    addBtn.textContent=total>0
+      ? `＋ 將 ${money(fourTotal)} 帶入今日記帳`
+      : '＋ 將 DPA 總額帶入今日記帳';
+  }
+}
+
+
+/*
+ * 把 DPA 總額帶到 10/15 的今日記帳
+ *
+ * 10/14 = dayIndex 0
+ * 10/15 = dayIndex 1
+ */
+function addDpaToDayExpense(){
+
+  const selected=getDpaSelection();
+
+  if(!selected.length){
+    alert('請先勾選至少一項 Disney Premier Access。');
+    return;
+  }
+
+  const total=selected.reduce(
+    (sum,item)=>sum + item.price,
+    0
+  ) * 4;
+
+  const names=selected.map(item=>item.name).join('、');
+
+  // 10/15 = dayIndex 1
+  const root=document.querySelector('[data-expense-day="1"]');
+
+  if(!root){
+    alert('找不到 10/15 的今日記帳區塊。');
+    return;
+  }
+
+  const itemInput=root.querySelector('[data-field="item"]');
+  const amountInput=root.querySelector('[data-field="amount"]');
+  const payerSelect=root.querySelector('[data-field="payer"]');
+
+  if(!itemInput || !amountInput || !payerSelect){
+    alert('找不到今日記帳欄位。');
+    return;
+  }
+
+  // 自動填入
+  itemInput.value=`Disney Premier Access｜${names}`;
+  amountInput.value=total;
+
+  // 如果目前裝置已登入某個成員，就預設他付款
+  if(cloudDisplayName && people.includes(cloudDisplayName)){
+    payerSelect.value=cloudDisplayName;
+  }
+
+  // 讓分攤者預設四人全選
+  root.querySelectorAll('[data-participants] input').forEach(input=>{
+    input.checked=true;
+  });
+
+  // 滾到 10/15 今日記帳
+  root.scrollIntoView({
+    behavior:'smooth',
+    block:'center'
+  });
+
+  // 稍微提示一下
+  setTimeout(()=>{
+    itemInput.focus();
+  },400);
+}
+
+
+// DPA 勾選
+document.addEventListener('change',async e=>{
+
+  if(!e.target.matches('[data-dpa]')) return;
+
+  const key=e.target.dataset.dpa;
+
+  try{
+
+    if(cloudTripId && sbClient){
+
+      await setCloudSharedItem(
+        'dpa',
+        key,
+        e.target.checked
+      );
+
+    }else{
+
+      const state=loadDpa();
+
+      state[key]=e.target.checked;
+
+      localStorage.setItem(
+        DPA_TOTAL_KEY,
+        JSON.stringify(state)
+      );
+    }
+
+    renderDpa();
+
+  }catch(err){
+
+    console.error('DPA sync failed',err);
+
+    alert(
+      `同步 DPA 狀態失敗：${err.message||err}`
+    );
+
+    e.target.checked=!e.target.checked;
+
+    renderDpa();
+  }
+
+});
+
+
+// 「帶入今日記帳」按鈕
+document.addEventListener('click',e=>{
+
+  const btn=e.target.closest('[data-dpa-add-expense]');
+
+  if(!btn) return;
+
+  addDpaToDayExpense();
+
+});
 
 
     // Desktop UX: convert mouse-wheel vertical movement into horizontal scrolling

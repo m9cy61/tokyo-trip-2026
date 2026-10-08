@@ -143,15 +143,7 @@
     .dpa-item input{accent-color:var(--red);margin:0}
     .dpa-item span{min-width:0;overflow-wrap:anywhere}
     .dpa-item b{white-space:nowrap;font-size:11px}
-  .dpa-expense-btn{
-  margin-top:8px;
-  width:100%;
-}
-
-.dpa-expense-btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
+    .dpa-total{margin-top:10px;padding:9px 10px;border-radius:12px;background:#faf7f0;border:1px solid var(--line);font-size:12px}
     .dpa-section-label{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:900;padding:7px 2px 2px}
     .dpa-note-inline{display:inline-block;margin-left:6px;font-size:10px;color:var(--muted);font-weight:700}
 
@@ -522,132 +514,120 @@
               <div class="dpa-section-label">🎆 遊行／表演</div>
               <label class="dpa-item"><input type="checkbox" data-dpa="believe"><span>🌊 Believe!～Sea of Dreams～<small class="dpa-note-inline">10/15 19:30</small></span><b>¥2,500</b></label>
             </div>
-           <div class="dpa-total">
-  <div>已勾選：<b data-dpa-total>¥0</b>／4人合計：<b data-dpa-total-4>¥0</b></div>
-  <button type="button" class="ghost-btn dpa-expense-btn" data-dpa-add-expense disabled>
-    ＋ 將 DPA 總額帶入今日記帳
-  </button>
-</div>
+            <div class="dpa-total">已勾選：<b data-dpa-total>¥0</b>／4人預估：<b data-dpa-total-4>¥0</b></div>
             <div class="map-note">10/15 官方日程中，Believe!～Sea of Dreams～為 Disney Premier Access 對象，場次 19:30；其餘演出是否提供 DPA 以東京迪士尼度假區官方 App 當日顯示為準。</div>
           </div>
           <div class="card side-card"><h3>小提醒</h3><div class="notice soft">行程已經很滿，10/15 不再安排市區購物，專心玩 DisneySea。</div></div>`
       },
       {
-        label:'10/16 龜有', title:'龜有 → 淺草思夢樂＋GU → 晴空塔 → 秋葉原', color:'購物日',
+        label:'10/16 龜有', title:'神田 → 御徒町 → 龜有 → 晴空塔 → 淺草 ROX → 秋葉原', color:'購物日',
         route:[
-          ['08:00–08:30','退房','Hiyori → Maihama Station','🚐 先搭飯店接駁'],
-          ['08:30–09:40','移動＋寄行李','Maihama → Tokyo → Kanda','🧳 HOTEL SUI Kanda 放行李'],
-          ['09:40–10:10','神田 → 御徒町','JR 山手線／京濱東北線','🚃 前往咖啡與戶外用品'],
-          ['10:10–11:10','Egg Baby Cafe','早午餐／咖啡','☕ 行程補給'],
+          ['08:30–09:20','退房＋移動','Maihama → Tokyo → Kanda','🧳 4人＋行李；抵達東京站後視 Uber 價格決定是否直接搭車'],
+          ['09:20–10:10','寄行李','HOTEL SUI Kanda by ABEST','🏨 先放行李再出發'],
+          ['10:10–11:10','Egg Baby Cafe','早午餐／咖啡','☕ 今天正式早餐，後面不另外安排正餐午餐'],
           ['11:10–12:00','Mont-bell 御徒町','戶外用品','🛍️ 抓約 1 小時'],
-          ['12:00–12:40','御徒町 → 龜有','JR 移動','🚃 留意轉乘'],
-          ['12:40–14:00','龜有','Kochikame 銅像＋商店街＋Ario','📸 散步、拍照，不逛太晚'],
-          ['14:00–15:30','淺草 ROX・3G','しまむら 思夢樂 → GU','👚 本日購物核心'],
-          ['16:00–18:00','晴空塔／Solamachi','逛街＋拍照','🗼 不一定要上展望台'],
-          ['18:00–19:00','晚餐','晴空塔周邊','🍢 燒鳥／居酒屋方向'],
-          ['19:00–20:30','秋葉原 Don Quijote','唐吉訶德','🛒 零食、日用品、藥妝'],
-          ['20:30–21:00','回神田','秋葉原 → Kanda','🏨 回飯店休息']
+          ['12:00–12:40','御徒町 → 龜有','JR 移動','🚃 前往龜有'],
+          ['12:40–14:30','龜有','Kochikame 銅像＋商店街＋Ario','📸 散步、拍照、逛街；看到咖啡／小吃再補充'],
+          ['14:30–15:10','龜有 → 押上','JR／地鐵移動','🚃 前往晴空塔'],
+          ['15:10–18:00','東京晴空塔／Solamachi','逛街＋JUMP SHOP＋拍照','🗼 不一定要上展望台'],
+          ['18:30–19:30','やきとんひなた とうきょうスカイツリー駅店','已訂 18:30｜4人','🍢 已訂位；到店再決定單點／套餐'],
+          ['19:30–20:15','晴空塔 → 淺草','移動','🚃 前往 ROX・3G'],
+          ['20:15–21:00','淺草 ROX・3G','思夢樂／GU 等','👚 視營業時間快速逛'],
+          ['21:00–22:00','秋葉原 Don Quijote','唐吉訶德','🛒 零食、日用品、藥妝；當晚最後一站'],
+          ['22:00 起','回神田','秋葉原 → Kanda','🏨 回飯店休息']
         ],
         places:[
           ['Kanda',35.6917,139.7709,'神田站'],['Okachimachi',35.7074,139.7740,'御徒町站'],['Kameari',35.7664,139.8476,'龜有站'],
-          ['Asakusa ROX',35.7127,139.7958,'浅草ROX'],['Tokyo Skytree',35.7101,139.8107,'東京晴空塔'],['Don Quijote Akihabara',35.7010,139.7715,'ドン・キホーテ 秋葉原店']
+          ['Tokyo Skytree',35.7101,139.8107,'東京晴空塔'],['Yakiton Hinata Skytree',35.7107,139.8105,'やきとんひなた とうきょうスカイツリー駅店'],['Asakusa ROX',35.7127,139.7958,'浅草ROX'],['Don Quijote Akihabara',35.7010,139.7715,'ドン・キホーテ 秋葉原店']
         ],
-        embed:'浅草ROX 東京', zoom:13,
+        embed:'東京晴空塔 浅草ROX 秋葉原', zoom:13,
         links:[
+          ['Egg Baby Cafe','https://www.google.com/maps/search/?api=1&query=Egg+Baby+Cafe+Okachimachi+Tokyo'],
+          ['Mont-bell 御徒町','https://www.google.com/maps/search/?api=1&query=mont-bell+Okachimachi+Tokyo'],
+          ['龜有站','https://www.google.com/maps/search/?api=1&query=Kameari+Station+Tokyo'],
+          ['龜有 Ario','https://www.google.com/maps/search/?api=1&query=Ario+Kameari+Tokyo'],
+          ['晴空塔／Solamachi','https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree+Solamachi'],
+          ['JUMP SHOP 晴空塔','https://www.google.com/maps/search/?api=1&query=JUMP+SHOP+Tokyo+Skytree+Solamachi'],
+          ['やきとんひなた 晴空塔站店','https://www.google.com/maps/search/?api=1&query=やきとんひなた+とうきょうスカイツリー駅店'],
           ['淺草 ROX','https://www.google.com/maps/search/?api=1&query=ROX+Asakusa+Tokyo'],
           ['思夢樂 淺草 ROX','https://www.google.com/maps/search/?api=1&query=Shimamura+Asakusa+ROX+Tokyo'],
           ['GU 淺草','https://www.google.com/maps/search/?api=1&query=GU+Asakusa+ROX+Tokyo'],
-          ['晴空塔','https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree'],
           ['唐吉訶德秋葉原','https://www.google.com/maps/search/?api=1&query=Don+Quijote+Akihabara']
         ],
         side:`
-          <div class="card side-card"><h3>今天最值得買</h3><div class="shop"><span>しまむら 思夢樂</span><span class="pill">服飾／雜貨</span></div><div class="shop"><span>GU</span><span class="pill">服飾／聯名</span></div><div class="shop"><span>Don Quijote 秋葉原</span><span class="pill">藥妝／零食</span></div><div class="shop"><span>Mont-bell</span><span class="pill">戶外用品</span></div></div>
-          <div class="card side-card"><h3>行程邏輯</h3><div class="notice">把「思夢樂＋GU」集中在淺草 ROX・3G，再往晴空塔，晚上去秋葉原唐吉訶德，10/18 就不用再塞唐吉訶德。</div></div>
-          <div class="card side-card"><h3>今晚住宿</h3><p><b>HOTEL SUI Kanda by ABEST</b></p><p class="sub">10/16–10/18 共 3 晚。</p></div>`
+          <div class="card side-card"><h3>🛍️ 今日購物重點</h3><div class="shop"><span>Mont-bell 御徒町</span><span class="pill">戶外用品</span></div><div class="shop"><span>JUMP SHOP 晴空塔</span><span class="pill">角色周邊</span></div><div class="shop"><span>思夢樂＋GU</span><span class="pill">淺草 ROX</span></div><div class="shop"><span>Don Quijote 秋葉原</span><span class="pill">最後補貨</span></div></div>
+          <div class="card side-card"><h3>🍢 晚餐已確定</h3><p><b>やきとんひなた とうきょうスカイツリー駅店</b></p><p class="sub">18:30，4人已訂位。建議保留座位即可，到店再決定套餐或單點。</p></div>
+          <div class="card side-card"><h3>🏨 今晚住宿</h3><p><b>HOTEL SUI Kanda by ABEST</b></p><p class="sub">10/16–10/18 共 3 晚。</p></div>`
       },
       {
-        label:'10/17 鎌倉', title:'東京 → 鎌倉一日遊 → 銀座 Morikawa → 東京車站夜景', color:'古都日',
+        label:'10/17 鎌倉', title:'鎌倉 → 小町通 → 七里ヶ浜 → 東京', color:'古都日',
         route:[
-          ['07:40–07:50','神田 → 東京','JR Kanda → Tokyo','🚃 先抓 5–10 分鐘的市區段'],
-          ['07:50–08:20','東京 → 橫濱','JR 到 Yokohama','🚃 交通時間約 25–30 分鐘；僅作轉乘時間參考'],
-          ['08:20–08:50','橫濱 → 鎌倉','JR 到 Kamakura','🚃 今天核心景點在鎌倉，橫濱以轉乘為主'],
-          ['09:00–10:00','鶴岡八幡宮','神社＋周邊散步','⛩️ 上午主景點'],
-          ['10:00–11:00','小町通','散步＋小吃／午餐','🍡 逛街不要拉太長'],
-          ['11:00–11:20','鎌倉 → 長谷','江之電','🚃 前往大佛區域'],
-          ['11:20–12:00','鎌倉大佛','高德院','🗿 主要拍照與參觀'],
-          ['12:00–12:30','長谷咖啡休息','咖啡＋補水','☕ 讓雙腳休息一下'],
-          ['12:30–13:15','長谷寺','寺院／景觀','🌿 視體力調整停留時間'],
-          ['13:15–13:35','長谷 → 鎌倉高校前','江之電','🚃 前往平交道'],
-          ['13:35–14:15','鎌倉高校前平交道','拍照＋看海','📸 江之電經典景點'],
-          ['14:15–15:30','返回東京','鎌倉 → 東京','🚃 JR 為主，保留緩衝'],
-          ['15:30–16:30','東京車站','Gransta／Tokyo Character Street 等','🎁 先買耐放、常溫伴手禮'],
-          ['16:30–17:30','東京車站／丸之內','東京站丸之內站前廣場＋周邊散步','🌇 傍晚先逛一小段，晚上再回來拍夜景'],
-          ['17:30–18:00','東京 → 銀座','前往東銀座／森川','🚇 留時間移動與找店'],
-          ['18:00–19:00','Morikawa（森川）','銀座 2-13-17｜晚餐','🍲 事先訂位較安心'],
-          ['19:10–20:30','免費東京車站夜景','KITTE → 新丸之內大樓 → 丸之內大樓 → 東京站廣場','🌃 四個免費夜景點慢慢散步'],
-          ['20:30–21:00','東京 → 神田','回飯店','🏨 放伴手禮、休息']
+          ['07:40–08:50','神田 → 鎌倉','JR Kanda → Kamakura','🚃 早上直接前往鎌倉'],
+          ['08:50–09:40','鶴岡八幡宮','神社＋周邊散步','⛩️ 上午主景點'],
+          ['09:40–11:00','小町通','散步＋小吃／購物','🍡 不安排正式午餐，邊走邊吃'],
+          ['11:00–11:35','鎌倉 → 七里ヶ浜','江之電','🌊 沿海移動'],
+          ['11:35–12:45','bills 七里ヶ浜','早午餐／看海','🥞 七里ヶ浜第一站'],
+          ['12:45–13:15','七里ヶ浜海邊散步','海景＋拍照','🌊 留一點時間看海'],
+          ['13:15–14:00','Amalfi Caffé','咖啡／甜點休息','☕ 視當天營業與座位狀況'],
+          ['14:00–15:00','AMALFI Della Sera','海景餐廳／拍照','🌅 七里ヶ浜第二個重點餐廳；不一定要再吃正餐'],
+          ['15:00–16:00','七里ヶ浜 → 東京','江之電＋JR','🚃 回東京市區'],
+          ['16:00–18:00','東京車站／丸之內','Gransta／Tokyo Character Street／丸之內散步','🎁 伴手禮第一輪＋傍晚街景'],
+          ['18:00 起','東京市區晚間自由時間','視體力決定晚餐與夜景','🌃 不再塞滿固定景點']
         ],
-        places:[['Kamakura Station',35.3190,139.5503,'鎌倉站'],['Tsurugaoka Hachimangu',35.3261,139.5563,'鶴岡八幡宮'],['Komachi-dori',35.3220,139.5518,'小町通'],['Kotoku-in',35.3168,139.5364,'高德院大佛'],['Hasedera',35.3129,139.5330,'長谷寺'],['Kamakura High School Station',35.3069,139.4979,'鎌倉高校前站'],['Morikawa Ginza',35.6692,139.7672,'Morikawa／銀座2-13-17'],['Tokyo Station',35.6812,139.7671,'東京站']],
-        embed:'東京駅 丸の内 KITTE 銀座', zoom:12,
-        links:[['鎌倉站','https://www.google.com/maps/search/?api=1&query=Kamakura+Station'],['鶴岡八幡宮','https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu'],['高德院','https://www.google.com/maps/search/?api=1&query=Kotoku-in+Kamakura'],['鎌倉高校前','https://www.google.com/maps/search/?api=1&query=Kamakura+High+School+Station'],['Morikawa 森川','https://www.google.com/maps/search/?api=1&query=Morikawa+Ginza+2-13-17+Tokyo'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['KITTE','https://www.google.com/maps/search/?api=1&query=KITTE+Marunouchi+Tokyo'],['新丸之內大樓','https://www.google.com/maps/search/?api=1&query=Shin-Marunouchi+Building+Tokyo'],['丸之內大樓','https://www.google.com/maps/search/?api=1&query=Marunouchi+Building+Tokyo']],
+        places:[['Kamakura Station',35.3190,139.5503,'鎌倉站'],['Tsurugaoka Hachimangu',35.3261,139.5563,'鶴岡八幡宮'],['Komachi-dori',35.3220,139.5518,'小町通'],['bills Shichirigahama',35.3048,139.5051,'bills 七里ヶ浜'],['Amalfi Cafe Shichirigahama',35.3040,139.5054,'Amalfi Caffé 七里ヶ浜'],['Amalfi Della Sera',35.3028,139.5044,'AMALFI Della Sera'],['Tokyo Station',35.6812,139.7671,'東京站']],
+        embed:'鎌倉 小町通 七里ヶ浜 東京', zoom:12,
+        links:[['鎌倉站','https://www.google.com/maps/search/?api=1&query=Kamakura+Station'],['鶴岡八幡宮','https://www.google.com/maps/search/?api=1&query=Tsurugaoka+Hachimangu'],['小町通','https://www.google.com/maps/search/?api=1&query=Komachi-dori+Kamakura'],['bills 七里ヶ浜','https://www.billsjapan.com/jp/locations/shichirigahama'],['Amalfi Caffé 七里ヶ浜','https://www.google.com/maps/search/?api=1&query=Amalfi+Cafe+Shichirigahama+Kamakura'],['AMALFI Della Sera','https://www.google.com/maps/search/?api=1&query=Amalfi+Della+Sera+Kamakura'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station']],
         side:`
-          <div class="card side-card"><h3>伴手禮＋晚餐策略</h3><div class="notice soft">10/17 回到東京後先買第一輪耐放伴手禮，再去銀座吃 Morikawa；晚上回東京車站看免費夜景。10/19 只補漏買的東西。</div></div>
-          <div class="card side-card"><h3>🍲 Morikawa</h3><div class="shop"><span>森川（Morikawa）</span><span class="pill">18:00–19:00</span></div><p class="sub">銀座 2-13-17，預留約 1 小時用餐；小店建議事先訂位。</p></div>
-          <div class="card side-card"><h3>🌃 免費東京車站夜景</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="東京車站夜景動線，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>KITTE</b>夜景</div><span class="route-arrow">→</span><div class="route-node"><b>新丸之內大樓</b>7F</div><span class="route-arrow">→</span><div class="route-node"><b>丸之內大樓</b>5F</div><span class="route-arrow">→</span><div class="route-node"><b>東京站廣場</b>最後拍照</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
-          <div class="card side-card"><h3>鎌倉核心動線</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="鎌倉核心動線，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>鶴岡八幡宮</b>上午</div><span class="route-arrow">→</span><div class="route-node"><b>小町通</b>午餐</div><span class="route-arrow">→</span><div class="route-node"><b>大佛</b>長谷</div><span class="route-arrow">→</span><div class="route-node"><b>☕ 咖啡</b>休息</div><span class="route-arrow">→</span><div class="route-node"><b>鎌倉高校前</b>平交道</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
-          <div class="card side-card"><h3>今天不要塞太滿</h3><p class="sub">鎌倉走路量會很高，所以安排長谷咖啡休息；回東京後先買伴手禮，再吃晚餐，最後看夜景。</p></div>`
+          <div class="card side-card"><h3>🌊 七里ヶ浜三站</h3><div class="shop"><span>bills 七里ヶ浜</span><span class="pill">早午餐／看海</span></div><div class="shop"><span>Amalfi Caffé</span><span class="pill">咖啡／甜點</span></div><div class="shop"><span>AMALFI Della Sera</span><span class="pill">海景餐廳</span></div><p class="sub">三個點都集中在七里ヶ浜一帶，地理上順路；但不建議三間都吃完整正餐，依當天食慾彈性調整。</p></div>
+          <div class="card side-card"><h3>🍡 鎌倉上午</h3><p class="sub">鶴岡八幡宮 → 小町通。小町通以小吃、甜點、逛街為主，留肚子給七里ヶ浜。</p></div>
+          <div class="card side-card"><h3>🎁 東京</h3><p class="sub">回東京後以東京車站、丸之內為主，不再硬塞鎌倉大佛／長谷寺，避免整天走到太累。</p></div>`
       },
       {
         label:'10/18 池袋', title:'Chiikawa → 池袋 → Harajuku／Shibuya → SUPER SPARK', color:'活動日',
         route:[
-          ['09:20–09:25','神田出發','前往池袋','🚃 目標 09:45–09:50 抵達'],
+          ['09:20–09:50','神田 → 池袋','JR 移動','🚃 目標提早抵達'],
           ['10:20–12:20','Chiikawa Park','Sunshine City Annex','🎟️ 10:20 場次'],
-          ['12:30–13:40','焼肉あぶる 池袋店','午餐','🥩 午餐保留彈性'],
-          ['13:45–14:25','Sunshine City 扭蛋','池袋太陽城扭蛋區／商場','🎰 抓 30–40 分鐘'],
-          ['14:25–14:40','RODEO CROWNS','Sunshine City Alpa｜備選','👗 有體力再快速逛，不一定要去'],
-          ['14:40–15:00','池袋 → 原宿','JR／地鐵移動','🚃 目標 15:00 左右抵達'],
-          ['15:00–15:40','ASICS FLAGSHIP HARAJUKU','鞋款試穿／逛店','👟 本日原宿優先'],
+          ['12:30–13:40','焼肉あぶる 池袋店','午餐','🥩 已確定午餐'],
+          ['13:45–14:25','Sunshine City','扭蛋＋商場','🎰 抓 30–40 分鐘'],
+          ['14:25–14:40','RODEO CROWNS','Sunshine City Alpa｜備選','👗 有體力再快速逛'],
+          ['14:40–15:00','池袋 → 原宿','JR／地鐵','🚃 移動'],
+          ['15:00–15:40','ASICS FLAGSHIP HARAJUKU','鞋款試穿／逛店','👟 原宿優先'],
           ['15:40–16:10','竹下通／原宿街區','散步＋自由逛','🛍️ 不必硬塞店家'],
-          ['16:10–16:45','咖啡休息','原宿咖啡廳｜備選 café STUDIO','☕ 讓雙腳休息，視體力可略過'],
-          ['16:45–17:10','HOKA Harajuku','鞋款試穿｜備選','👟 有興趣再逛，不一定要買'],
-          ['17:10–17:30','Mizuno','快速逛','👟 沒有一定要買'],
+          ['16:10–16:45','Recoco Record Cafe','咖啡／休息','☕ 今日確定休息點'],
+          ['16:45–17:30','HOKA／Mizuno／澀谷','依體力自由選擇','👟 有興趣再逛'],
           ['17:30 起','分組','女生→六本木 SUPER SPARK；男生→原宿／澀谷自由逛','🎫 依第2場票券時間'],
           ['22:30 左右','神田集合','四人會合','🍢 再一起找居酒屋／宵夜']
         ],
-        places:[['Sunshine City',35.7287,139.7195,'Sunshine City'],['RODEO CROWNS',35.7287,139.7195,'Sunshine City Alpa'],['ASICS Harajuku',35.6687,139.7058,'ASICS FLAGSHIP HARAJUKU'],['HOKA Harajuku',35.6701,139.7024,'HOKA Harajuku'],['Mizuno Harajuku',35.6695,139.7056,'Mizuno Harajuku'],['Shibuya',35.6595,139.7005,'澀谷'],['Roppongi',35.6628,139.7314,'六本木']],
-        embed:'Sunshine City 池袋', zoom:13,
-        links:[['Sunshine City','https://www.google.com/maps/search/?api=1&query=Sunshine+City+Ikebukuro'],['RODEO CROWNS','https://www.google.com/maps/search/?api=1&query=RODEO+CROWNS+Sunshine+City+Ikebukuro'],['ASICS Harajuku','https://www.google.com/maps/search/?api=1&query=ASICS+FLAGSHIP+HARAJUKU'],['HOKA Harajuku','https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku'],['Mizuno Harajuku','https://www.google.com/maps/search/?api=1&query=Mizuno+Harajuku'],['澀谷','https://www.google.com/maps/search/?api=1&query=Shibuya+Tokyo'],['六本木','https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo']],
+        places:[['Chiikawa Park',35.7293,139.7194,'ちいかわパーク Sunshine City'],['Sunshine City',35.7287,139.7195,'Sunshine City'],['Yakiniku Aburu Ikebukuro',35.7290,139.7108,'焼肉あぶる 池袋店'],['RODEO CROWNS',35.7287,139.7195,'Sunshine City Alpa'],['ASICS Harajuku',35.6687,139.7058,'ASICS FLAGSHIP HARAJUKU'],['Recoco Record Cafe',35.6578,139.7020,'Recoco Record Cafe'],['HOKA Harajuku',35.6701,139.7024,'HOKA Harajuku'],['Mizuno Harajuku',35.6695,139.7056,'Mizuno Harajuku'],['Roppongi',35.6628,139.7314,'六本木']],
+        embed:'池袋 原宿 澀谷 六本木', zoom:12,
+        links:[['Chiikawa Park','https://www.google.com/maps/search/?api=1&query=ちいかわパーク+Sunshine+City'],['Sunshine City','https://www.google.com/maps/search/?api=1&query=Sunshine+City+Ikebukuro'],['焼肉あぶる 池袋店','https://www.google.com/maps/search/?api=1&query=焼肉あぶる+池袋店'],['RODEO CROWNS','https://www.google.com/maps/search/?api=1&query=RODEO+CROWNS+Sunshine+City+Ikebukuro'],['ASICS Harajuku','https://www.google.com/maps/search/?api=1&query=ASICS+FLAGSHIP+HARAJUKU'],['Recoco Record Cafe','https://www.google.com/maps/search/?api=1&query=Recoco+Record+Cafe+Shibuya'],['HOKA Harajuku','https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku'],['Mizuno Harajuku','https://www.google.com/maps/search/?api=1&query=Mizuno+Harajuku'],['六本木','https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo']],
         side:`
-          <div class="card side-card"><h3>🛍️ 池袋段落</h3><div class="shop"><span>焼肉あぶる 池袋店</span><span class="pill">12:30 午餐</span></div><div class="shop"><span>Sunshine City 扭蛋</span><span class="pill">13:45–14:25</span></div><div class="shop"><span>RODEO CROWNS</span><span class="pill">備選</span></div></div>
-          <div class="card side-card"><h3>採購優先順序</h3><div class="shop"><span>ASICS FLAGSHIP HARAJUKU</span><span class="pill">原宿優先</span></div><div class="shop"><span>HOKA</span><span class="pill">原宿備選</span></div><div class="shop"><span>RODEO CROWNS</span><span class="pill">池袋備選</span></div><div class="shop"><span>大國藥妝</span><span class="pill">澀谷備選</span></div><div class="shop"><span>唐吉訶德</span><span class="pill">10/16 已先買</span></div></div>
-          <div class="card side-card"><h3>☕ 咖啡休息</h3><p class="sub">16:10–16:45 預留咖啡休息；如果當天精神很好可以直接跳過，避免變成趕行程。</p></div>
-          <div class="card side-card"><h3>分組提醒</h3><div class="notice">SUPER SPARK 為固定活動。女生以票券上的第 2 場時間為準；男生可自行安排原宿／澀谷，不需要跟著女子場次移動。</div></div>
-          <div class="card side-card"><h3>晚餐</h3><p class="sub">四人約 22:30 在神田集合；晚餐／宵夜以營業到晚間較穩定的店為主，當天再決定。</p></div>`
+          <div class="card side-card"><h3>🛍️ 池袋段落</h3><div class="shop"><span>Chiikawa Park</span><span class="pill">10:20</span></div><div class="shop"><span>焼肉あぶる 池袋店</span><span class="pill">12:30 午餐</span></div><div class="shop"><span>Sunshine City 扭蛋</span><span class="pill">13:45–14:25</span></div><div class="shop"><span>RODEO CROWNS</span><span class="pill">備選</span></div></div>
+          <div class="card side-card"><h3>☕ 確定休息點</h3><p><b>Recoco Record Cafe</b></p><p class="sub">16:10–16:45，安排成為原宿／澀谷段的固定休息點。</p></div>
+          <div class="card side-card"><h3>分組提醒</h3><div class="notice">SUPER SPARK 為固定活動。女生以第 2 場票券時間為準；男生自行安排原宿／澀谷，不需要跟著女子場次移動。</div></div>`
       },
       {
-        label:'10/19 回台', title:'兩隊分流：MAPPA／東京車站 → 成田', color:'返程日',
+        label:'10/19 回台', title:'MAPPA／東京車站 → 神田取行李 → 日暮里 → 成田', color:'返程日',
         route:[
-          ['08:30–09:00','四人一起退房','神田飯店 → 寄放／保管大行李','🧳 先確認護照、行李、戰利品，避免之後再找東西'],
-          ['09:00–09:15','兩隊分流','小王＋小施 → 有樂町；小郭＋小羅 → 東京車站','👥 MAPPA 與伴手禮分開進行，不互相綁行程'],
-          ['09:40–10:00','小王＋小施｜MAPPA','有樂町／會場附近集合','🎬 目標 10:00 場，建議提早到場'],
-          ['09:15–11:15','小郭＋小羅｜東京車站','Gransta／Tokyo Character Street 等','🎁 先完成最後一輪伴手禮；不必等 MAPPA'],
-          ['10:00–11:20','小王＋小施｜MAPPA EXPO','展覽＋周邊','🎬 看展為主，11:20–11:30 左右離場'],
-          ['11:30–11:45','四人重新集合','回神田飯店取行李','🤝 兩隊會合後一起出發，開始進機場模式'],
-          ['11:45–12:20','神田 → 日暮里','JR 前往日暮里','🚆 目標 12:20 左右到日暮里'],
-          ['12:20–13:00','日暮里 → 成田','Skyliner → 成田機場','✈️ 目標 13:00 前後抵達機場'],
-          ['13:00–15:00','成田機場','報到、托運、安檢、候機','🧳 15:30 起飛，預留約 2.5 小時'],
+          ['07:00–07:40','退房＋寄放大行李','HOTEL SUI Kanda by ABEST','🧳 四人先把行李寄放飯店'],
+          ['07:40–08:00','分流','小王＋小施 → MAPPA；小郭＋小羅 → 東京車站','👥 兩隊分開行動'],
+          ['08:00–09:00','DEPOT 東京車站','小王＋小施早餐／小郭＋小羅可自由會合','☕ Tokyo Station Gransta B1F'],
+          ['09:00–11:00','小王＋小施｜MAPPA EXPO','YURAKUCHO MUSEUM／東京國際論壇 B1','🎬 以實際票券入場時間為準'],
+          ['09:00–11:00','小郭＋小羅｜東京車站','GRANSTA／Tokyo Character Street／伴手禮','🎁 最後補買'],
+          ['11:00–11:20','回神田','兩隊各自返回飯店','🤝 11:20 前後集合取行李'],
+          ['11:20–11:40','神田 → 日暮里','JR','🚆 目標 12:00 前抵達日暮里'],
+          ['12:00 前','日暮里 → 成田','Skyliner','✈️ 目標 13:00 前抵達成田機場'],
+          ['13:00–15:00','成田機場','報到、托運、安檢、候機','🧳 15:30 起飛'],
           ['15:30','成田起飛','Narita → Taichung','✈️ 15:30–18:10']
         ],
-        places:[['Tokyo Station',35.6812,139.7671,'東京站'],['Yurakucho',35.6749,139.7626,'有樂町'],['Kanda',35.6917,139.7709,'神田'],['Nippori Station',35.7278,139.7709,'日暮里站'],['Narita Airport',35.7719,140.3929,'成田機場']],
+        places:[['DEPOT Tokyo Station',35.6813,139.7670,'DEPOT 東京站 Gransta'],['Tokyo Station',35.6812,139.7671,'東京站'],['Yurakucho Museum',35.6749,139.7626,'YURAKUCHO MUSEUM 東京國際論壇 B1'],['Kanda',35.6917,139.7709,'神田站'],['Nippori Station',35.7278,139.7709,'日暮里站'],['Narita Airport',35.7719,140.3929,'成田機場']],
         embed:'東京站 有樂町 神田 日暮里 成田', zoom:12,
-        links:[['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['有樂町／MAPPA方向','https://www.google.com/maps/search/?api=1&query=Yurakucho+Tokyo'],['神田站','https://www.google.com/maps/search/?api=1&query=Kanda+Station+Tokyo'],['日暮里站','https://www.google.com/maps/search/?api=1&query=Nippori+Station+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
+        links:[['DEPOT 東京站','https://www.google.com/maps/search/?api=1&query=DEPOT+Tokyo+Station+Gransta'],['東京車站','https://www.google.com/maps/search/?api=1&query=Tokyo+Station'],['MAPPA EXPO／YURAKUCHO MUSEUM','https://expo.mappa.co.jp/'],['東京國際論壇','https://www.t-i-forum.co.jp/en/'],['神田站','https://www.google.com/maps/search/?api=1&query=Kanda+Station+Tokyo'],['日暮里站','https://www.google.com/maps/search/?api=1&query=Nippori+Station+Tokyo'],['成田機場','https://www.google.com/maps/search/?api=1&query=Narita+International+Airport']],
         side:`
-          <div class="card side-card"><h3>👥 10/19 兩隊分流</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="10/19 兩隊分流，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>小王＋小施</b>MAPPA EXPO<br>目標 10:00 場</div><span class="route-arrow">↔</span><div class="route-node"><b>小郭＋小羅</b>東京車站<br>伴手禮</div><span class="route-arrow">→</span><div class="route-node"><b>11:30–11:45</b>神田會合<br>一起取行李</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
-          <div class="card side-card"><h3>返程優先順序</h3><div class="stats"><div class="stat"><b>10:00</b><span>MAPPA 目標場次</span></div><div class="stat"><b>11:30</b><span>神田重新集合</span></div><div class="stat"><b>13:00</b><span>目標抵達成田</span></div><div class="stat"><b>15:30</b><span>成田起飛</span></div></div></div>
-          <div class="card side-card"><h3>📋 分流提醒</h3><div class="notice">四人一起退房後，把大行李留在神田飯店保管。小王、小施輕裝去 MAPPA；小郭、小羅去東京車站。約 11:30–11:45 回神田集合，再一起前往成田。</div></div>
-          <div class="card side-card"><h3>🎬 MAPPA</h3><p class="sub">目標預約 10:00 場。若實際票券／入場狀況不同，以當天票券規則為準；11:20–11:30 左右離場比較適合後續機場節奏。</p></div>
-          <div class="card side-card"><h3>🎁 東京車站</h3><p class="sub">小郭＋小羅可優先逛 GRANSTA、Tokyo Character Street、伴手禮區；因 10/17 已安排先買一輪，10/19 以補買為主。</p></div>
-          <div class="card side-card"><h3>航班</h3><table class="mini-table"><tr><td>成田 → 台中</td><td>15:30–18:10</td></tr><tr><td>目標到機場</td><td>13:00</td></tr></table></div>`
+          <div class="card side-card"><h3>👥 10/19 兩隊分流</h3><div class="route-strip-wrap"><div class="route-strip" tabindex="0" aria-label="10/19 兩隊分流，可左右拖曳或使用滑鼠滾輪橫向捲動"><div class="route-node"><b>小王＋小施</b>MAPPA EXPO<br>依實際票券入場時間</div><span class="route-arrow">↔</span><div class="route-node"><b>小郭＋小羅</b>東京車站<br>最後伴手禮</div><span class="route-arrow">→</span><div class="route-node"><b>11:20 左右</b>神田會合<br>一起取行李</div><div class="route-scroll-hint">↔ 滑鼠放上來可用滾輪左右滑動，也可以直接拖曳下方捲軸</div></div></div>
+          <div class="card side-card"><h3>☕ 早餐</h3><p><b>DEPOT 東京站 Gransta B1F</b></p><p class="sub">兩隊都可以利用東京車站段解決早餐，再各自前往 MAPPA／伴手禮行程。</p></div>
+          <div class="card side-card"><h3>🎬 MAPPA</h3><p class="sub">會場為 YURAKUCHO MUSEUM（東京國際論壇 B1）。實際入場時間以手上的票券為準；因為 12:00 前要到日暮里、13:00 前到成田，所以不建議安排太晚的入場場次。</p></div>
+          <div class="card side-card"><h3>✈️ 返程</h3><div class="stats"><div class="stat"><b>12:00</b><span>日暮里目標</span></div><div class="stat"><b>13:00</b><span>成田目標</span></div><div class="stat"><b>15:30</b><span>成田起飛</span></div></div></div>`
       }
     ];
 
@@ -1164,210 +1144,33 @@
       }
     });
       // DPA selection state for DisneySea 10/15.
-   // DPA selection state for DisneySea 10/15.
-const DPA_TOTAL_KEY = 'tokyo-dpa-v1';
-
-const DPA_PRICES = {
-  anna:2500,
-  rapunzel:2000,
-  peter:2000,
-  soaring:2500,
-  toystory:2000,
-  journey:2000,
-  raging:1500,
-  believe:2500
-};
-
-function loadDpa(){
-  if(cloudTripId) return {...cloudSharedItems.dpa};
-
-  try{
-    const raw=localStorage.getItem(DPA_TOTAL_KEY);
-    return raw?JSON.parse(raw):{};
-  }catch{
-    return {};
-  }
-}
-
-function getDpaSelection(){
-  const state=loadDpa();
-
-  return Object.keys(state)
-    .filter(key=>state[key] && DPA_PRICES[key])
-    .map(key=>{
-      const box=document.querySelector(`[data-dpa="${key}"]`);
-      const name=box?.closest('.dpa-item')?.querySelector('span')?.innerText?.trim() || key;
-
-      return {
-        key,
-        name,
-        price:DPA_PRICES[key]
-      };
+    const DPA_TOTAL_KEY = 'tokyo-dpa-v1';
+    const DPA_PRICES = { anna:2500, rapunzel:2000, peter:2000, soaring:2500, toystory:2000, journey:2000, raging:1500, believe:2500 };
+    function loadDpa(){
+      if(cloudTripId) return {...cloudSharedItems.dpa};
+      try{ const raw=localStorage.getItem(DPA_TOTAL_KEY); return raw?JSON.parse(raw):{}; }catch{return {}}
+    }
+    function renderDpa(){
+      const boxes=document.querySelectorAll('[data-dpa]'); if(!boxes.length)return;
+      const state=loadDpa(); let total=0;
+      boxes.forEach(b=>{ b.checked=!!state[b.dataset.dpa]; if(b.checked) total+=DPA_PRICES[b.dataset.dpa]||0; });
+      const one=document.querySelector('[data-dpa-total]'); const four=document.querySelector('[data-dpa-total-4]');
+      if(one) one.textContent=money(total); if(four) four.textContent=money(total*4);
+    }
+    document.addEventListener('change',async e=>{
+      if(!e.target.matches('[data-dpa]')) return;
+      const key=e.target.dataset.dpa;
+      try{
+        if(cloudTripId && sbClient){await setCloudSharedItem('dpa',key,e.target.checked);}
+        else{ const state=loadDpa(); state[key]=e.target.checked; localStorage.setItem(DPA_TOTAL_KEY,JSON.stringify(state)); }
+        renderDpa();
+      }catch(err){
+        console.error('DPA sync failed',err);
+        alert(`同步 DPA 狀態失敗：${err.message||err}`);
+        e.target.checked=!e.target.checked;
+        renderDpa();
+      }
     });
-}
-
-function getDpaTotal(){
-  return getDpaSelection()
-    .reduce((sum,item)=>sum + item.price,0);
-}
-
-function renderDpa(){
-
-  const boxes=document.querySelectorAll('[data-dpa]');
-  if(!boxes.length)return;
-
-  const state=loadDpa();
-  let total=0;
-
-  boxes.forEach(b=>{
-    b.checked=!!state[b.dataset.dpa];
-
-    if(b.checked){
-      total+=DPA_PRICES[b.dataset.dpa]||0;
-    }
-  });
-
-  const fourTotal=total*4;
-
-  const one=document.querySelector('[data-dpa-total]');
-  const four=document.querySelector('[data-dpa-total-4]');
-  const addBtn=document.querySelector('[data-dpa-add-expense]');
-
-  if(one) one.textContent=money(total);
-  if(four) four.textContent=money(fourTotal);
-
-  if(addBtn){
-    addBtn.disabled=total<=0;
-    addBtn.textContent=total>0
-      ? `＋ 將 ${money(fourTotal)} 帶入今日記帳`
-      : '＋ 將 DPA 總額帶入今日記帳';
-  }
-}
-
-
-/*
- * 把 DPA 總額帶到 10/15 的今日記帳
- *
- * 10/14 = dayIndex 0
- * 10/15 = dayIndex 1
- */
-function addDpaToDayExpense(){
-
-  const selected=getDpaSelection();
-
-  if(!selected.length){
-    alert('請先勾選至少一項 Disney Premier Access。');
-    return;
-  }
-
-  const total=selected.reduce(
-    (sum,item)=>sum + item.price,
-    0
-  ) * 4;
-
-  const names=selected.map(item=>item.name).join('、');
-
-  // 10/15 = dayIndex 1
-  const root=document.querySelector('[data-expense-day="1"]');
-
-  if(!root){
-    alert('找不到 10/15 的今日記帳區塊。');
-    return;
-  }
-
-  const itemInput=root.querySelector('[data-field="item"]');
-  const amountInput=root.querySelector('[data-field="amount"]');
-  const payerSelect=root.querySelector('[data-field="payer"]');
-
-  if(!itemInput || !amountInput || !payerSelect){
-    alert('找不到今日記帳欄位。');
-    return;
-  }
-
-  // 自動填入
-  itemInput.value=`Disney Premier Access｜${names}`;
-  amountInput.value=total;
-
-  // 如果目前裝置已登入某個成員，就預設他付款
-  if(cloudDisplayName && people.includes(cloudDisplayName)){
-    payerSelect.value=cloudDisplayName;
-  }
-
-  // 讓分攤者預設四人全選
-  root.querySelectorAll('[data-participants] input').forEach(input=>{
-    input.checked=true;
-  });
-
-  // 滾到 10/15 今日記帳
-  root.scrollIntoView({
-    behavior:'smooth',
-    block:'center'
-  });
-
-  // 稍微提示一下
-  setTimeout(()=>{
-    itemInput.focus();
-  },400);
-}
-
-
-// DPA 勾選
-document.addEventListener('change',async e=>{
-
-  if(!e.target.matches('[data-dpa]')) return;
-
-  const key=e.target.dataset.dpa;
-
-  try{
-
-    if(cloudTripId && sbClient){
-
-      await setCloudSharedItem(
-        'dpa',
-        key,
-        e.target.checked
-      );
-
-    }else{
-
-      const state=loadDpa();
-
-      state[key]=e.target.checked;
-
-      localStorage.setItem(
-        DPA_TOTAL_KEY,
-        JSON.stringify(state)
-      );
-    }
-
-    renderDpa();
-
-  }catch(err){
-
-    console.error('DPA sync failed',err);
-
-    alert(
-      `同步 DPA 狀態失敗：${err.message||err}`
-    );
-
-    e.target.checked=!e.target.checked;
-
-    renderDpa();
-  }
-
-});
-
-
-// 「帶入今日記帳」按鈕
-document.addEventListener('click',e=>{
-
-  const btn=e.target.closest('[data-dpa-add-expense]');
-
-  if(!btn) return;
-
-  addDpaToDayExpense();
-
-});
 
 
     // Desktop UX: convert mouse-wheel vertical movement into horizontal scrolling
